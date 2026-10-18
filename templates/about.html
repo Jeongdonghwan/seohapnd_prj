@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% from "_page.html" import phead %}
+{% set nav = 'about' %}
+{% block title %}회사소개 — {{ C.name }}{% endblock %}
+{% block desc %}{{ C.legal }}. 2019년 담양 무정공단에서 시작한 농업용 멀칭필름 전문 제조사. 인사말, 조직, 오시는 길.{% endblock %}
+{% block body %}
+{{ phead('회사소개', '농민과 함께 발전하고, 농민과 함께 행복해 하는 회사', 'line-rolls') }}
+<main class="page">
+
+  <section class="about-greet">
+    <div class="reveal">
+      <p class="eyebrow">인사말</p>
+      <h2>작물의 품질 향상과 생산성 증대를 위해<br>최고의 제품, 최고의 품질로 보답하겠습니다.</h2>
+    </div>
+    <div class="greet-body reveal">
+      <p>{{ C.name }}는 전라남도 담양군 무정공단에서 농업용 멀칭필름을 직접 압출·생산하는 농업회사법인입니다. 2019년 사업을 시작한 이래 LD·HD 멀칭필름, 녹색·흑백·침공 필름, 장수·치마·끈 필름까지 작물과 계절에 맞는 필름을 농가에 공급해 왔습니다.</p>
+      <p>2023년에는 환경표지 인증(EL724)을 받은 '이로운(E-Roun)' 생분해 멀칭필름을 출시했습니다. 수거와 폐기가 필요 없이 토양으로 돌아가는 필름으로, 땅에 이롭고 농민에게 이롭고 작물에도 이로운 '삼리(三利)'의 농업을 지향합니다.</p>
+      <p>기술혁신형 중소기업(Inno-Biz), 벤처기업, 뿌리기업, 소재·부품·장비 전문기업 확인과 연구개발전담부서 인정, 2건의 특허가 저희 기술력의 근거입니다. 앞으로도 농가의 수확으로 보답하는 회사가 되겠습니다.</p>
+      <p class="sign">{{ C.legal }} 대표이사 <b>{{ C.ceo }}</b></p>
+    </div>
+  </section>
+
+  <section class="about-sec">
+    <div class="sec-head reveal"><p class="eyebrow">회사 개요</p><h2>회사 개요</h2></div>
+    <dl class="overview reveal">
+      <div><dt>상호</dt><dd>{{ C.legal }}<br><small>{{ C.en }}</small></dd></div>
+      <div><dt>대표이사</dt><dd>{{ C.ceo }}</dd></div>
+      <div><dt>설립</dt><dd>{{ C.founded }}년 2월</dd></div>
+      <div><dt>업종</dt><dd>농업용 폴리에틸렌 필름 제조 (멀칭필름 · 생분해필름)</dd></div>
+      <div><dt>브랜드</dt><dd>{{ C.brand }} · 이로운(E-Roun)</dd></div>
+      <div><dt>소재지</dt><dd>{{ C.addr }}</dd></div>
+      <div><dt>연락처</dt><dd>T. {{ C.tel }} · F. {{ C.fax }}</dd></div>
+      <div><dt>사업자등록번호</dt><dd>{{ C.biz_no }}</dd></div>
+    </dl>
+  </section>
+
+  <section class="about-sec">
+    <div class="sec-head reveal"><p class="eyebrow">연혁</p><h2>걸어온 길</h2></div>
+    <ol class="timeline">
+      <li class="reveal"><b>2019.02</b><span>{{ C.legal }} 설립, 담양 무정공단 공장 가동</span></li>
+      <li class="reveal"><b>2019.08</b><span>SPS 우수단체표준제품 확인 (농업용 폴리에틸렌 필름 HD·LLD)</span></li>
+      <li class="reveal"><b>2021.06</b><span>특허 등록 — 타공비닐의 돌출부 펼침장치</span></li>
+      <li class="reveal"><b>2023.03</b><span>연구개발전담부서 인정</span></li>
+      <li class="reveal"><b>2023.12</b><span>'이로운' 생분해 멀칭필름 환경표지 인증 (EL724)</span></li>
+      <li class="reveal"><b>2024</b><span>기술혁신형 중소기업(Inno-Biz) A등급 · 벤처기업 · 뿌리기업 확인</span></li>
+      <li class="reveal"><b>2026.04</b><span>소재·부품·장비 전문기업 확인</span></li>
+    </ol>
+  </section>
+
+  <section class="about-sec">
+    <div class="sec-head reveal"><p class="eyebrow">조직</p><h2>조직도</h2></div>
+    <div class="org reveal">
+      <div class="org-top"><span>대표이사</span><b>{{ C.ceo }}</b></div>
+      <ul class="org-depts">
+        {% for d in org %}
+        <li class="{{ d.color }}"><p class="dept">{{ d.dept }}</p><ul>{% for mname in d.members %}<li>{{ mname }}</li>{% endfor %}</ul></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+  <section class="about-sec" id="loc">
+    <div class="sec-head reveal"><p class="eyebrow">오시는 길</p><h2>오시는 길</h2></div>
+    <div class="loc reveal">
+      <div class="map"><iframe title="오시는 길 지도" src="https://maps.google.com/maps?q={{ C.map_q|urlencode }}&z=15&output=embed" loading="lazy" allowfullscreen></iframe></div>
+      <div class="loc-info">
+        <p class="addr">{{ C.addr }}</p>
+        <p>T. <a href="tel:{{ C.tel }}">{{ C.tel }}</a><br>F. {{ C.fax }}</p>
+        <p>{{ C.hours }}</p>
+        <img src="{{ url_for('static', filename='img/factory/exterior.webp') }}" alt="본사 전경" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+</main>
+{% endblock %}

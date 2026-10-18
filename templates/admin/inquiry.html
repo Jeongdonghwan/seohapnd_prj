@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% set nav = 'admin' %}
+{% block title %}문의 #{{ inq.id }} — 관리 — {{ C.name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block body %}
+<main class="page admin narrow">
+  {% for msg in get_flashed_messages() %}<div class="flash">{{ msg }}</div>{% endfor %}
+  <p class="crumbs dark"><a href="/admin">← 문의 관리</a></p>
+  <article class="post">
+    <header>
+      <span class="status s{{ inq.status }}">{{ '답변완료' if inq.status else '답변대기' }}</span>{% if inq.is_private %} <span class="tag">비밀글</span>{% endif %}
+      <h1>{{ inq.subject }}</h1>
+      <dl class="meta-dl">
+        <div><dt>이름</dt><dd>{{ inq.name }}</dd></div>
+        <div><dt>연락처</dt><dd><a href="tel:{{ inq.phone }}">{{ inq.phone }}</a></dd></div>
+        <div><dt>이메일</dt><dd>{% if inq.email %}<a href="mailto:{{ inq.email }}">{{ inq.email }}</a>{% else %}—{% endif %}</dd></div>
+        <div><dt>회사</dt><dd>{{ inq.company or '—' }}</dd></div>
+        <div><dt>접수</dt><dd>{{ inq.created_at }} · IP {{ inq.ip }}</dd></div>
+        <div><dt>공개 링크</dt><dd><a href="/inquiry/{{ inq.id }}" target="_blank">/inquiry/{{ inq.id }}</a></dd></div>
+      </dl>
+    </header>
+    <div class="content">{{ inq.content|nl2br }}</div>
+  </article>
+
+  <form class="form" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>답변 {% if inq.answered_at %}<small class="faint">최종 {{ inq.answered_at }}</small>{% endif %}
+      <textarea name="answer" rows="10" placeholder="답변을 저장하면 '답변완료' 상태가 되고, 작성자가 게시글에서 볼 수 있습니다.">{{ inq.answer }}</textarea></label>
+    <div class="actions"><button class="btn">답변 저장</button></div>
+  </form>
+  <form method="post" class="danger" onsubmit="return confirm('#{{ inq.id }} 문의를 삭제할까요? 되돌릴 수 없습니다.')">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="delete">
+    <button class="btn line red">문의 삭제</button>
+  </form>
+</main>
+{% endblock %}

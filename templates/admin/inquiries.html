@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% set nav = 'admin' %}
+{% block title %}문의 관리 — {{ C.name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block body %}
+<main class="page admin">
+  {% for msg in get_flashed_messages() %}<div class="flash">{{ msg }}</div>{% endfor %}
+  <div class="admin-head">
+    <h1>문의 관리</h1>
+    <div class="atabs">
+      <a href="/admin" class="{{ 'on' if not status }}">전체</a>
+      <a href="/admin?status=0" class="{{ 'on' if status == '0' }}">답변대기 <b>{{ pending }}</b></a>
+      <a href="/admin?status=1" class="{{ 'on' if status == '1' }}">답변완료</a>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="board admin-tbl">
+      <thead><tr><th class="no">#</th><th>제목</th><th>이름</th><th>연락처</th><th>회사</th><th class="st">상태</th><th class="dt">접수</th></tr></thead>
+      <tbody>
+        {% for r in rows %}
+        <tr class="{{ 'pending' if not r.status }}">
+          <td class="no">{{ r.id }}</td>
+          <td class="t"><a href="/admin/inquiry/{{ r.id }}">{{ '🔒 ' if r.is_private }}{{ r.subject }}</a></td>
+          <td>{{ r.name }}</td>
+          <td><a href="tel:{{ r.phone }}">{{ r.phone }}</a></td>
+          <td>{{ r.company or '—' }}</td>
+          <td class="st"><span class="status s{{ r.status }}">{{ '완료' if r.status else '대기' }}</span></td>
+          <td class="dt">{{ r.created_at }}</td>
+        </tr>
+        {% else %}<tr><td colspan="7" class="empty">문의가 없습니다.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+{% endblock %}

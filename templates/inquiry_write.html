@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_page.html" import phead %}
+{% set nav = 'inquiry' %}
+{% block title %}문의 남기기 — {{ C.name }}{% endblock %}
+{% block body %}
+{{ phead('문의 남기기', '연락처를 정확히 남겨주시면 전화 또는 게시판 답변으로 안내해 드립니다.', 'line-tower', [('/inquiry', '문의게시판')]) }}
+<main class="page narrow">
+  {% for msg in get_flashed_messages() %}<div class="flash err">{{ msg }}</div>{% endfor %}
+  <form class="form reveal" method="post" action="/inquiry/write">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="row2">
+      <label>이름 <span class="req">*</span><input name="name" maxlength="20" value="{{ f.name or '' }}" required></label>
+      <label>연락처 <span class="req">*</span><input name="phone" type="tel" maxlength="20" placeholder="010-0000-0000" value="{{ f.phone or '' }}" required></label>
+    </div>
+    <div class="row2">
+      <label>이메일<input name="email" type="email" maxlength="100" value="{{ f.email or '' }}"></label>
+      <label>회사 · 농장명<input name="company" maxlength="50" value="{{ f.company or '' }}"></label>
+    </div>
+    <label>제목 <span class="req">*</span><input name="subject" maxlength="100" placeholder="예: 흑색 LD 멀칭 폭 150cm 견적 문의" value="{{ f.subject or '' }}" required></label>
+    <label>내용 <span class="req">*</span><textarea name="content" rows="8" maxlength="3000" placeholder="제품, 두께, 폭, 수량, 유공 여부, 배송 지역을 적어주시면 빠르게 답변 드립니다." required>{{ f.content or '' }}</textarea></label>
+    <div class="row2 private">
+      <label class="chk"><input type="checkbox" name="is_private" id="is_private" {{ 'checked' if f.is_private is not defined or f.is_private }}> 비밀글 (작성자와 관리자만 열람)</label>
+      <label>비밀번호<input name="password" type="password" minlength="4" maxlength="20" placeholder="비밀글 열람용, 4자 이상" value="{{ f.password or '' }}"></label>
+    </div>
+    <p class="note">입력하신 개인정보는 문의 답변 용도로만 사용되며, 답변 완료 후 요청 시 삭제해 드립니다.</p>
+    <div class="actions"><a class="btn line" href="/inquiry">목록</a><button class="btn">문의 등록</button></div>
+  </form>
+</main>
+{% endblock %}

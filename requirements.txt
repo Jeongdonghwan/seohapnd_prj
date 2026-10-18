@@ -1,0 +1,6 @@
+Flask>=3.0
+Flask-WTF>=1.2
+python-dotenv>=1.0
+gunicorn>=21.2
+backports.zoneinfo; python_version < "3.9"
+# tools/optimize_images.py 는 로컬 전용: pip install Pillow pymupdf

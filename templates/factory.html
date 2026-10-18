@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_page.html" import phead %}
+{% set nav = 'factory' %}
+{% block title %}생산설비 — {{ C.name }}{% endblock %}
+{% block desc %}담양 무정공단 자체 공장. 블로운 필름 압출 라인에서 두께 0.012mm부터 최대 폭 600cm까지 농업용 필름을 생산합니다.{% endblock %}
+{% block body %}
+{{ phead('생산설비', '담양 무정공단 자체 공장에서 압출부터 권취·포장·출하까지 한 곳에서 이뤄집니다.', 'line-green') }}
+<main class="page">
+  <div class="fac-intro reveal">
+    <div><p class="eyebrow">생산 공정</p><h2>압출 → 권취 → 검수 → 포장 · 출하</h2></div>
+    <ol class="process">
+      <li><b>01</b><span>원료 투입 · 블로운 압출</span><small>LD · HD · LLD 수지, 생분해 수지</small></li>
+      <li><b>02</b><span>냉각 · 권취</span><small>두께 0.012mm~, 최대 폭 600cm</small></li>
+      <li><b>03</b><span>유공 · 침공 가공</span><small>작물별 구멍 간격 주문 가능</small></li>
+      <li><b>04</b><span>검수 · Box/Roll 포장 · 출하</span><small>SPS 우수단체표준 기준</small></li>
+    </ol>
+  </div>
+  <ul class="gallery">
+    {% for f in photos %}
+    <li class="reveal" style="--d:{{ loop.index0 * 70 }}ms"><button type="button" class="cimg" data-img="{{ url_for('static', filename='img/factory/' ~ f.img ~ '.webp') }}" aria-label="{{ f.cap }} 크게 보기"><img src="{{ url_for('static', filename='img/factory/' ~ f.img ~ '.webp') }}" alt="{{ f.cap }}" loading="lazy"><span>{{ f.cap }}</span></button></li>
+    {% endfor %}
+  </ul>
+  <div class="page-cta reveal">
+    <p>공장 방문 상담을 원하시면 미리 연락 주세요.</p>
+    <div class="cta-btns"><a class="btn" href="tel:{{ C.tel }}">{{ C.tel }}</a><a class="btn line" href="/about#loc">오시는 길</a></div>
+  </div>
+</main>
+<dialog id="lightbox" class="lightbox"><button class="close" aria-label="닫기">×</button><img alt=""></dialog>
+{% endblock %}

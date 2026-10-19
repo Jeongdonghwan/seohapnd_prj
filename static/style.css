@@ -44,8 +44,7 @@ h2{font-size:clamp(26px,3.4vw,40px)}
 /* 인트로 (첫 방문 1.5초) */
 .intro{position:fixed;inset:0;z-index:100;background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;transition:opacity .6s var(--ease),visibility .6s}
 .intro-in{text-align:center}
-.intro-w{display:block;font-size:clamp(40px,8vw,72px);font-weight:900;letter-spacing:-.04em;animation:introUp .8s var(--ease) both}
-.intro-w b{color:var(--brand)}
+.intro-w{display:block;width:clamp(240px,40vw,440px);height:auto;margin:0 auto;animation:introUp .8s var(--ease) both}
 .intro-line{display:block;width:0;height:2px;margin:14px auto;background:var(--brand-grad);animation:introLine .7s .35s var(--ease) both}
 .intro-s{display:block;font-size:14px;color:rgba(255,255,255,.7);letter-spacing:.06em;animation:introUp .6s .55s var(--ease) both}
 .seen .intro{opacity:0;visibility:hidden}
@@ -56,9 +55,11 @@ h2{font-size:clamp(26px,3.4vw,40px)}
 .hd{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .3s,box-shadow .3s,color .3s;color:#fff}
 .hd-in{max-width:var(--w);margin:0 auto;height:72px;display:flex;align-items:center;gap:24px;padding:0 20px}
 .hd.solid,body:not(.home) .hd{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);color:var(--text);box-shadow:0 1px 0 var(--line)}
-.logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;letter-spacing:-.04em}
-.word b{color:var(--brand)}
-.hd.solid .word b,body:not(.home) .hd .word b{color:var(--brand)}
+.logo{display:flex;align-items:center;flex:none}
+.logo img{display:block;height:50px;width:auto}
+.logo .lw{display:none}
+.home .hd:not(.solid) .lc,html.menu-open body .hd .lc{display:none}
+.home .hd:not(.solid) .lw,html.menu-open body .hd .lw{display:block}
 .gnb{margin-left:auto;display:flex;align-items:center;gap:4px}
 .gnb a{padding:8px 13px;font-size:15px;font-weight:600;border-radius:999px;opacity:.88;transition:background .2s,opacity .2s}
 .gnb a:hover{opacity:1;background:rgba(255,255,255,.14)}
@@ -163,7 +164,7 @@ html:not(.seen) .stg{animation-delay:calc(1.6s + var(--i,0) * .12s)}
 /* 푸터 */
 .ft{background:var(--navy);color:rgba(255,255,255,.75);padding:56px 20px 28px;font-size:13.5px}
 .ft-in{max-width:var(--w);margin:0 auto;display:grid;grid-template-columns:1.2fr 1.4fr 1fr;gap:32px}
-.ft .word{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.04em}
+.ft-logo{display:block;width:200px;height:auto}
 .ft-brand p{margin-top:10px;line-height:1.6}
 .ft-info p{margin-bottom:4px}
 .ft-links{display:flex;flex-wrap:wrap;gap:6px 18px;align-content:start}
@@ -379,7 +380,7 @@ table.board .lock{color:var(--faint)}
   .menu-open .gnb{transform:none}
   .gnb a{font-size:20px;font-weight:700;padding:14px 16px;border-radius:var(--r2)}
   .gnb .tel{margin:16px 0 0;justify-content:center;height:54px}
-  .menu-open .hd{background:var(--navy);color:#fff;box-shadow:none}
+  html.menu-open body .hd{background:var(--navy);color:#fff;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}  /* blur가 있으면 fixed 메뉴 기준점이 헤더로 바뀌어 메뉴가 안 깔림 */  /* 서브 페이지 흰 헤더 규칙보다 우선 */
   .bio-in,.cta-in{grid-template-columns:1fr;gap:36px}
   .bio-text .sticky{position:static}
   .bio-steps{padding-top:0}
@@ -399,6 +400,7 @@ table.board .lock{color:var(--faint)}
   .meta-dl{grid-template-columns:1fr}
 }
 @media(max-width:560px){
+  .logo img{height:40px}
   .pcards{grid-template-columns:1fr}
   .cgrid,.gallery,.process,.form .row2{grid-template-columns:1fr}
   .org-depts{grid-template-columns:1fr}

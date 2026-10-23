@@ -37,7 +37,7 @@ def main():
             if ref not in seen and not ref.startswith("/admin"):
                 seen.add(ref)
                 assert c.get(ref).status_code == 200, (u, ref)
-    for u in ("/sitemap.xml", "/robots.txt", "/brochure.pdf", "/static/img/og.jpg"):
+    for u in ("/sitemap.xml", "/robots.txt", "/brochure.pdf", "/static/img/og.jpg", "/favicon.ico", "/static/favicon.svg"):
         assert c.get(u).status_code == 200, u
     assert all(f"/products/{p['slug']}" in c.get("/sitemap.xml").get_data(as_text=True) for p in D.PRODUCTS)
     assert c.get("/nope").status_code == 404 and c.get("/products/nope").status_code == 404 and c.get("/inquiry/999").status_code == 404

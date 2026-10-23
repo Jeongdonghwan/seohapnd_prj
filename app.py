@@ -135,6 +135,11 @@ def factory():
     return render_template("factory.html", photos=D.FACTORY)
 
 
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(app.static_folder, "favicon.ico", mimetype="image/vnd.microsoft.icon", max_age=86400)
+
+
 @app.route("/brochure.pdf")
 def brochure():
     return send_from_directory(app.static_folder, "brochure.pdf", download_name="서하P&D_브로슈어.pdf")

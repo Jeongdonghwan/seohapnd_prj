@@ -13,7 +13,7 @@
 
 ## 디자인 규칙 (2026-10-14 사용자 확정)
 - 컬러: 팜플렛 블루 `--brand:#2F7BFF`, 네이비 `--navy:#0B1F3A`, 생분해 전용 그린 `--green:#2FA84F`
-- 로고: 원본 `서하피엔디 로고.ai` → `tools/build_logo.py`로 `static/img/logo/` SVG 생성 (2026-10-19). 헤더 `logo-h.svg`(홈 히어로 위·메뉴 열림은 `logo-h-white.svg`), 인트로·푸터 `logo-white.svg`, 파비콘 `symbol.svg`+PNG. 로고 글자색 #036EB7. **'용표' 배지·문구는 쓰지 않음**
+- 로고: 원본 `서하피엔디 로고.ai` → `tools/build_logo.py`로 `static/img/logo/` SVG 생성 (2026-10-19). 헤더 `logo-h.svg`(홈 히어로 위·메뉴 열림은 `logo-h-white.svg`), 인트로·푸터 `logo-white.svg`, 파비콘은 로고 파랑 둥근 사각형+흰 S 마크(`static/favicon.svg`·`favicon.ico`(/favicon.ico 라우트)·`apple-touch-icon.png`). 로고 글자색 #036EB7. **'용표' 배지·문구는 쓰지 않음**
 - 홈에 숫자 카운트(설립연도 등) 띠 넣지 않음 (제거됨). 제품은 4×2 그리드, 가로 스크롤 아님
 - **알약형 라벨(.tag) 쓰지 않음** ("AI 같다"는 이유로 제거, 2026-10-18). 섹션 소제목(eyebrow)은 영문 대문자 말고 한글
 - 모션: CSS + IntersectionObserver `.reveal` 하나. 라이브러리 금지. `prefers-reduced-motion` 시 전부 꺼짐

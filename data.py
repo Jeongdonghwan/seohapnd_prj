@@ -178,11 +178,11 @@ CERTS = [
 ORG = ["생산1부", "생산2부", "경영지원부", "영업부", "출하부", "연구개발팀"]   # 2026-10 수정 요청: 대표이사 외 직함·이름 없이 부서명만
 
 FACTORY = [
-    {"img": "line-tower", "cap": "블로운 필름 압출 타워"},
-    {"img": "line-wide", "cap": "압출 · 권취 라인"},
-    {"img": "line-green", "cap": "녹색 멀칭 필름 생산"},
-    {"img": "line-rolls", "cap": "출하 대기 중인 제품 롤"},
-    {"img": "bio-rolls", "cap": "이로운 생분해 필름 포장"},
+    {"img": "line-tower", "cap": "블로운 필름 압출 타워 1"},
+    {"img": "line-wide", "cap": "블로운 필름 압출 타워 2"},
+    {"img": "line-green", "cap": "필름 생산 & 적재 1"},
+    {"img": "line-rolls", "cap": "필름 생산 & 적재 2"},
+    {"img": "bio-rolls", "cap": "이로운 생분해 필름 포장"},   # 2026-10 업체: 차주 사진·문구 교체 예정
     {"img": "exterior", "cap": "담양 무정공단 본사 · 공장"},
 ]
 

@@ -13,7 +13,8 @@
 <link rel="icon" href="{{ url_for('static', filename='img/logo/symbol.svg') }}" type="image/svg+xml">
 <link rel="icon" href="{{ url_for('static', filename='favicon-32.png') }}" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
-<link rel="preload" as="image" href="{{ url_for('static', filename='img/hero/line-tower.webp') }}">
+{% if nav == 'home' %}<link rel="preload" as="image" href="{{ url_for('static', filename='video/hero-pc.jpg') }}" media="(orientation: landscape)">
+<link rel="preload" as="image" href="{{ url_for('static', filename='video/hero-mobile.jpg') }}" media="(orientation: portrait)">{% endif %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 {% block head %}{% endblock %}

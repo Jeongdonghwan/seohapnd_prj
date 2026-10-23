@@ -6,6 +6,21 @@
   // 인트로(스플래시): 메인 화면은 새로고침·모바일 포함 매번 1.5초
   if (!doc.classList.contains('seen')) setTimeout(() => doc.classList.add('seen'), reduce ? 0 : 1500);
 
+  // 히어로 영상: 세로 화면이면 모바일용, 가로면 PC용. 동작 줄이기 설정이면 첫 장면 사진만
+  const hv = document.getElementById('heroVideo');
+  if (hv) {
+    const portrait = matchMedia('(orientation: portrait)');
+    const pick = () => {
+      const k = portrait.matches ? 'mo' : 'pc';
+      hv.poster = hv.dataset[k + 'Poster'];
+      if (reduce || hv.dataset.cur === k) return;
+      hv.dataset.cur = k; hv.src = hv.dataset[k];
+      hv.play().catch(() => {});      // 저전력 모드 등으로 막히면 포스터가 그대로 보임
+    };
+    pick();
+    portrait.addEventListener ? portrait.addEventListener('change', pick) : portrait.addListener(pick);
+  }
+
   // 헤더: 스크롤 시 흰 배경
   const hd = document.getElementById('hd');
   const onScroll = () => hd.classList.toggle('solid', scrollY > 40);

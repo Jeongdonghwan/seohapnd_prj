@@ -6,7 +6,9 @@
 
 <!-- 히어로 -->
 <section class="hero" id="top">
-  <div class="hero-bg" style="background-image:url('{{ url_for('static', filename='img/hero/line-tower.webp') }}')"></div>
+  <div class="hero-bg"><video id="heroVideo" muted loop playsinline preload="none" poster="{{ url_for('static', filename='video/hero-pc.jpg') }}"
+    data-pc="{{ url_for('static', filename='video/hero-pc.mp4') }}" data-pc-poster="{{ url_for('static', filename='video/hero-pc.jpg') }}"
+    data-mo="{{ url_for('static', filename='video/hero-mobile.mp4') }}" data-mo-poster="{{ url_for('static', filename='video/hero-mobile.jpg') }}"></video></div>
   <div class="hero-in">
     <p class="eyebrow stg">농업회사법인 (주)서하P&amp;D · 전남 담양</p>
     <h1 class="stg">작물의 품질 향상과<br>생산성 증대를 위해</h1>

@@ -75,9 +75,9 @@ h2{font-size:clamp(26px,3.4vw,40px)}
 
 /* 히어로 */
 .hero{position:relative;min-height:100svh;display:flex;align-items:center;color:#fff;overflow:hidden;background:var(--navy)}
-.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;animation:kenburns 16s ease-in-out infinite alternate}
+.hero-bg{position:absolute;inset:0}
+.hero-bg video{display:block;width:100%;height:100%;object-fit:cover}
 .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(11,31,58,.88) 0%,rgba(11,31,58,.55) 55%,rgba(47,123,255,.25) 100%)}
-@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.08)}}
 .hero-in{position:relative;max-width:var(--w);width:100%;margin:0 auto;padding:120px 20px 100px}
 .hero .eyebrow{color:#8FC0FF}
 .hero h1{font-size:clamp(34px,6vw,68px);font-weight:900;letter-spacing:-.035em;line-height:1.15;text-shadow:0 2px 24px rgba(0,0,0,.25)}

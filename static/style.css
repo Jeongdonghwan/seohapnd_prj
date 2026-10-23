@@ -88,6 +88,10 @@ h2{font-size:clamp(26px,3.4vw,40px)}
 .hero .stg:nth-child(1){--i:0}.hero .stg:nth-child(2){--i:1}.hero .stg:nth-child(3){--i:2}.hero .stg:nth-child(4){--i:3}
 html:not(.seen) .stg{animation-delay:calc(1.6s + var(--i,0) * .12s)}
 @keyframes up{to{opacity:1;transform:none}}
+.sound{position:absolute;right:max(20px,calc((100% - var(--w)) / 2 + 20px));bottom:28px;display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border-radius:999px;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.45);backdrop-filter:blur(6px);color:#fff;font-size:13.5px;font-weight:700;transition:background .2s}
+.sound:hover{background:rgba(255,255,255,.26)}
+.sound .i-on,.sound.on .i-off{display:none}
+.sound.on .i-on{display:block}
 .scroll-hint{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);width:26px;height:42px;border:2px solid rgba(255,255,255,.55);border-radius:14px}
 .scroll-hint span{position:absolute;left:50%;top:7px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:#fff;animation:wheel 1.8s ease-in-out infinite}
 @keyframes wheel{0%{opacity:1;transform:translateY(0)}70%{opacity:0;transform:translateY(14px)}100%{opacity:0}}

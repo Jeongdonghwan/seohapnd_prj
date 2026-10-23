@@ -19,6 +19,38 @@
     };
     pick();
     portrait.addEventListener ? portrait.addEventListener('change', pick) : portrait.addListener(pick);
+
+    // 소리: 브라우저는 클릭 전 소리 자동재생을 막음 → 무음 재생, 첫 클릭·터치·키 입력 때 켜짐. 버튼으로 끄면 다시 안 켬
+    const btn = document.getElementById('heroSound');
+    if (!reduce) {
+      let userOff = false;
+      try { userOff = sessionStorage.getItem('heroSound') === 'off'; } catch (e) {}
+      hv.volume = 0.6;
+      const setSound = on => {
+        hv.muted = !on;
+        if (on) hv.play().catch(() => {});
+        btn.classList.toggle('on', on);
+        btn.setAttribute('aria-pressed', on);
+        btn.querySelector('span').textContent = on ? '소리 끄기' : '소리 켜기';
+      };
+      btn.hidden = false;
+      btn.addEventListener('click', () => {
+        const on = hv.muted;
+        userOff = !on;
+        try { sessionStorage.setItem('heroSound', on ? 'on' : 'off'); } catch (e) {}
+        setSound(on);
+      });
+      const firstGesture = e => {
+        ['pointerdown', 'keydown'].forEach(t => removeEventListener(t, firstGesture, true));
+        if (!userOff && !btn.contains(e.target)) setSound(true);
+      };
+      ['pointerdown', 'keydown'].forEach(t => addEventListener(t, firstGesture, true));
+
+      // 히어로가 화면 밖이면 멈춤 (아래 읽는 동안 음악·배터리 낭비 방지)
+      new IntersectionObserver(([en]) => {
+        if (en.isIntersecting) hv.play().catch(() => {}); else hv.pause();
+      }, { threshold: 0.15 }).observe(hv.closest('.hero'));
+    }
   }
 
   // 헤더: 스크롤 시 흰 배경

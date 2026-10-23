@@ -5,6 +5,7 @@
 {% block body %}
 <main class="page admin">
   {% for msg in get_flashed_messages() %}<div class="flash">{{ msg }}</div>{% endfor %}
+  {% include "admin/_bar.html" %}
   <div class="admin-head">
     <h1>문의 관리</h1>
     <div class="atabs">
@@ -20,7 +21,7 @@
         {% for r in rows %}
         <tr class="{{ 'pending' if not r.status }}">
           <td class="no">{{ r.id }}</td>
-          <td class="t"><a href="/admin/inquiry/{{ r.id }}">{{ '🔒 ' if r.is_private }}{{ r.subject }}</a></td>
+          <td class="t"><a href="/admin/inquiry/{{ r.id }}">{% if r.is_private %}<svg class="lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>{% endif %}{{ r.subject }}</a></td>
           <td>{{ r.name }}</td>
           <td><a href="tel:{{ r.phone }}">{{ r.phone }}</a></td>
           <td>{{ r.company or '—' }}</td>

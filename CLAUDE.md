@@ -7,7 +7,8 @@
 - Flask + Jinja2 SSR, 바닐라 JS 1파일(`static/app.js`), CSS 1파일(`static/style.css`), Pretendard CDN
 - 콘텐츠(회사정보·제품 8종·규격표·인증 9건·조직도·사진 캡션)는 전부 `data.py`. 문구 수정은 여기만
 - 문의게시판만 SQLite(`db.py`, 테이블 1개 `inquiries`, 첫 연결 시 자동 생성). 파일 경로 `DB_PATH`(기본 `inquiries.db`)
-- 관리자 `/admin`: BasicAuth(`ADMIN_ID`/`ADMIN_PW` in `.env`). 문의 답변·삭제만 있음, 공지사항 없음
+- 관리자 `/admin`: **로그인 페이지 방식** `/admin/login` (세션, 브라우저 팝업 BasicAuth 쓰지 않음, 2026-10-23 요청). 계정은 `.env`의 `ADMIN_ID`/`ADMIN_PW`. 5회 실패 시 IP 10분 잠금(메모리). 로그아웃 POST `/admin/logout`. 문의 답변·삭제만 있음, 공지사항 없음
+- 브라우저 alert/confirm/prompt 창 쓰지 않음. 확인은 페이지 안에서 (삭제는 `<details>` 펼쳐서 한 번 더 누르기)
 - 새 문의 메일 알림은 `SMTP_HOST`+`NOTIFY_TO` 설정 시에만. 실패해도 문의 저장엔 영향 없음
 - CSRF: Flask-WTF `CSRFProtect`. 폼에 `csrf_token` hidden 필수. 스팸은 허니팟 필드 `website`
 

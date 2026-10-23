@@ -5,7 +5,8 @@
 {% block body %}
 <main class="page admin narrow">
   {% for msg in get_flashed_messages() %}<div class="flash">{{ msg }}</div>{% endfor %}
-  <p class="crumbs dark"><a href="/admin">← 문의 관리</a></p>
+  {% include "admin/_bar.html" %}
+  <p class="crumbs dark"><a href="/admin">← 문의 목록</a></p>
   <article class="post">
     <header>
       <span class="status s{{ inq.status }}">{{ '답변완료' if inq.status else '답변대기' }}</span>{% if inq.is_private %} <span class="tag">비밀글</span>{% endif %}
@@ -28,10 +29,14 @@
       <textarea name="answer" rows="10" placeholder="답변을 저장하면 '답변완료' 상태가 되고, 작성자가 게시글에서 볼 수 있습니다.">{{ inq.answer }}</textarea></label>
     <div class="actions"><button class="btn">답변 저장</button></div>
   </form>
-  <form method="post" class="danger" onsubmit="return confirm('#{{ inq.id }} 문의를 삭제할까요? 되돌릴 수 없습니다.')">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input type="hidden" name="action" value="delete">
-    <button class="btn line red">문의 삭제</button>
-  </form>
+  <details class="danger">
+    <summary class="btn line red">문의 삭제</summary>
+    <form method="post" class="confirm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="delete">
+      <p>#{{ inq.id }} 문의를 삭제할까요? 삭제하면 되돌릴 수 없습니다.</p>
+      <button class="btn red">삭제</button>
+    </form>
+  </details>
 </main>
 {% endblock %}

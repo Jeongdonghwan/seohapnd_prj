@@ -374,7 +374,22 @@ table.board .lock{color:var(--faint)}
 .meta-dl div{display:grid;grid-template-columns:72px 1fr;gap:8px}
 .meta-dl dt{color:var(--faint);font-weight:700}
 .meta-dl a{color:var(--brand);font-weight:600}
-.danger{margin-top:28px;padding-top:20px;border-top:1px dashed var(--line);display:flex;justify-content:flex-end}
+.danger{margin-top:28px;padding-top:20px;border-top:1px dashed var(--line);text-align:right}
+.danger summary{list-style:none;cursor:pointer;display:inline-flex}
+.danger summary::-webkit-details-marker{display:none}
+.danger[open] summary{display:none}
+.danger .confirm{display:flex;align-items:center;justify-content:flex-end;gap:14px;flex-wrap:wrap;padding:16px 18px;border-radius:var(--r2);background:#FDECEA;color:#C0392B;font-weight:600}
+.btn.red{background:#C0392B;box-shadow:none}.btn.red:hover{background:#A93226}
+.admin-bar{display:flex;align-items:center;gap:16px;justify-content:flex-end;margin-bottom:18px;font-size:13.5px;color:var(--sub)}
+.admin-bar span{margin-right:auto;font-weight:700;color:var(--navy)}
+.admin-bar a{color:var(--brand);font-weight:600}
+.admin-bar button{font-weight:600;color:var(--sub);text-decoration:underline}
+.login-page{min-height:calc(100vh - 160px);display:flex;align-items:center;justify-content:center}
+.login-box{width:100%;max-width:400px;padding:40px 34px;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 20px 50px rgba(20,33,61,.08);text-align:left}
+.login-box h1{font-size:22px;margin:4px 0 4px}
+.login-box .flash{margin:0}
+.login-box .more{text-align:center;font-size:13.5px;color:var(--sub)}
+.login-logo{height:44px;width:auto;margin-bottom:6px}
 
 /* 반응형 */
 @media(max-width:960px){

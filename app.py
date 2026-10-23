@@ -3,6 +3,7 @@
 import hmac
 import re
 import smtplib
+import time
 from datetime import datetime
 from email.message import EmailMessage
 from functools import wraps
@@ -65,14 +66,26 @@ def client_ip():
 def admin_required(view):
     @wraps(view)
     def wrapped(*a, **k):
-        auth, cfg = request.authorization, app.config
-        ok = (auth and cfg["ADMIN_ID"] and cfg["ADMIN_PW"]
-              and hmac.compare_digest(auth.username or "", cfg["ADMIN_ID"])
-              and hmac.compare_digest(auth.password or "", cfg["ADMIN_PW"]))
-        if not ok:
-            return Response("", 401, {"WWW-Authenticate": 'Basic realm="seoha admin"'})
+        if not session.get("admin"):
+            return redirect(url_for("admin_login", next=request.full_path.rstrip("?")))
         return view(*a, **k)
     return wrapped
+
+
+# ponytail: 로그인 실패 기록은 프로세스 메모리 (워커 1개 기준). 워커를 늘리면 DB/redis로 옮길 것
+LOGIN_FAILS = {}
+LOCK_N, LOCK_SEC = 5, 600
+
+
+def same(a, b):
+    """시간차 공격 없는 비교. 한글 입력도 되도록 바이트로 (str은 ASCII만 허용)."""
+    return hmac.compare_digest(a.encode(), b.encode())
+
+
+def login_locked(ip):
+    now = time.time()
+    LOGIN_FAILS[ip] = [t for t in LOGIN_FAILS.get(ip, []) if now - t < LOCK_SEC]
+    return len(LOGIN_FAILS[ip]) >= LOCK_N
 
 
 def notify(inq):
@@ -229,6 +242,40 @@ def inquiry_view(iid):
 
 
 # ─── 관리자 ─────────────────────────────────────────────
+
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    nxt = request.values.get("next", "")
+    nxt = nxt if nxt.startswith("/admin") else url_for("admin")      # 외부 주소로 튕기는 것 방지
+    if session.get("admin"):
+        return redirect(nxt)
+    if request.method == "POST":
+        ip, cfg = client_ip(), app.config
+        if login_locked(ip):
+            flash("로그인 실패가 많아 10분간 잠겼습니다.")
+        elif (cfg["ADMIN_ID"] and cfg["ADMIN_PW"]
+              and same(request.form.get("username", ""), cfg["ADMIN_ID"])
+              and same(request.form.get("password", ""), cfg["ADMIN_PW"])):
+            LOGIN_FAILS.pop(ip, None)
+            keep = session.get("inq_ok")
+            session.clear()
+            session["admin"] = True
+            if keep:
+                session["inq_ok"] = keep
+            return redirect(nxt)
+        else:
+            LOGIN_FAILS.setdefault(ip, []).append(time.time())
+            flash("아이디 또는 비밀번호가 맞지 않습니다.")
+        return render_template("admin/login.html", nxt=nxt, username=request.form.get("username", "")), 401
+    return render_template("admin/login.html", nxt=nxt, username="")
+
+
+@app.post("/admin/logout")
+def admin_logout():
+    session.pop("admin", None)
+    flash("로그아웃되었습니다.")
+    return redirect(url_for("admin_login"))
+
 
 @app.route("/admin")
 @admin_required

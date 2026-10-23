@@ -1,0 +1,5 @@
+<div class="admin-bar">
+  <span>관리자 모드</span>
+  <a href="/" target="_blank">사이트 보기</a>
+  <form method="post" action="/admin/logout"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button>로그아웃</button></form>
+</div>

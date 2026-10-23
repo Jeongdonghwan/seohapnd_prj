@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% set nav = 'admin' %}
+{% block title %}관리자 로그인 — {{ C.name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block body %}
+<main class="page admin login-page">
+  <form class="form login-box" method="post" action="/admin/login">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="next" value="{{ nxt }}">
+    <img src="{{ url_for('static', filename='img/logo/logo-h.svg') }}" alt="{{ C.name }}" class="login-logo">
+    <h1>관리자 로그인</h1>
+    {% for msg in get_flashed_messages() %}<div class="flash {{ 'err' if '맞지' in msg or '잠겼' in msg }}">{{ msg }}</div>{% endfor %}
+    <label>아이디<input name="username" value="{{ username }}" autocomplete="username" required autofocus></label>
+    <label>비밀번호<input name="password" type="password" autocomplete="current-password" required></label>
+    <button class="btn full">로그인</button>
+    <a class="more" href="/">← 홈으로</a>
+  </form>
+</main>
+{% endblock %}

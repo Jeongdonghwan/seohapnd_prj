@@ -17,7 +17,7 @@
           {% if first %}<th rowspan="{{ span }}" class="cat">{{ cat }}</th>{% endif %}
           <td class="m-cat">{{ cat }}{% if color %} · {{ color }}{% endif %}</td>
           <td class="color{{ ' none' if not color }}" data-label="색상">{{ color or '—' }}</td>
-          <td data-label="두께 (mm)">{{ thick or '문의' }}</td>
+          <td data-label="두께 (mm)">{{ (thick or '문의')|nl2br }}</td>
           <td data-label="폭 (cm)">{{ width }}</td>
           <td data-label="유공">{{ hole or '—' }}</td>
           <td data-label="포장">{{ pack }}</td>

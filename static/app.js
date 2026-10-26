@@ -66,6 +66,18 @@
   });
   document.getElementById('gnb').addEventListener('click', e => { if (e.target.tagName === 'A') doc.classList.remove('menu-open'); });
 
+  // 숫자 카운트업 (회사소개 300+). 동작 줄이기면 그대로 숫자만
+  const countUp = el => {
+    if (reduce) return;
+    const end = +el.dataset.count, t0 = performance.now(), dur = 1400;
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / dur);
+      el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+
   // 스크롤 리빌
   if (reduce || !('IntersectionObserver' in window)) {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
@@ -73,6 +85,7 @@
     const io = new IntersectionObserver(entries => entries.forEach(en => {
       if (!en.isIntersecting) return;
       en.target.classList.add('in');
+      en.target.querySelectorAll('[data-count]').forEach(countUp);
       io.unobserve(en.target);
     }), { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
@@ -83,7 +96,7 @@
       tick = setTimeout(() => {
         tick = 0;
         document.querySelectorAll('.reveal:not(.in)').forEach(el => {
-          if (el.getBoundingClientRect().top < innerHeight) { el.classList.add('in'); io.unobserve(el); }
+          if (el.getBoundingClientRect().top < innerHeight) { el.classList.add('in'); el.querySelectorAll('[data-count]').forEach(countUp); io.unobserve(el); }
         });
       }, 150);
     }, { passive: true });

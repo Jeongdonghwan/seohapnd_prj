@@ -15,18 +15,18 @@
     </div>
   </div>
   <div class="table-wrap">
-    <table class="board admin-tbl">
+    <table class="board admin-tbl cards">
       <thead><tr><th class="no">#</th><th>제목</th><th>이름</th><th>연락처</th><th>회사</th><th class="st">상태</th><th class="dt">접수</th></tr></thead>
       <tbody>
         {% for r in rows %}
         <tr class="{{ 'pending' if not r.status }}">
           <td class="no">{{ r.id }}</td>
           <td class="t"><a href="/admin/inquiry/{{ r.id }}">{% if r.is_private %}<svg class="lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>{% endif %}{{ r.subject }}</a></td>
-          <td>{{ r.name }}</td>
-          <td><a href="tel:{{ r.phone }}">{{ r.phone }}</a></td>
-          <td>{{ r.company or '—' }}</td>
-          <td class="st"><span class="status s{{ r.status }}">{{ '완료' if r.status else '대기' }}</span></td>
-          <td class="dt">{{ r.created_at }}</td>
+          <td data-label="이름">{{ r.name }}</td>
+          <td data-label="연락처"><a href="tel:{{ r.phone }}">{{ r.phone }}</a></td>
+          <td data-label="회사">{{ r.company or '—' }}</td>
+          <td class="st" data-label="상태"><span class="status s{{ r.status }}">{{ '완료' if r.status else '대기' }}</span></td>
+          <td class="dt" data-label="접수">{{ r.created_at }}</td>
         </tr>
         {% else %}<tr><td colspan="7" class="empty">문의가 없습니다.</td></tr>{% endfor %}
       </tbody>

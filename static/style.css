@@ -248,6 +248,20 @@ td.empty{text-align:center;color:var(--faint);padding:48px}
 table.spec th.cat{background:var(--surface);font-weight:800;white-space:nowrap;border-right:1px solid var(--line)}
 table.spec td.color{font-weight:700;white-space:nowrap}
 table.spec tr.bio td,table.spec tr.bio th.cat{background:var(--green-soft);color:var(--green-dark)}
+table.spec td.m-cat{display:none}
+/* 모바일: 표 → 품목별 카드 (옆으로 밀지 않아도 전부 보이게) */
+@media(max-width:640px){
+  .table-wrap:has(table.spec){border:0;overflow:visible}
+  table.spec,table.spec tbody,table.spec tr,table.spec td{display:block;width:100%}
+  table.spec thead,table.spec th.cat,table.spec td.color{display:none}
+  table.spec tr{margin-bottom:12px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#fff}
+  table.spec td{display:flex;justify-content:space-between;gap:16px;padding:10px 16px;border-bottom:1px solid var(--line);font-size:14px;text-align:right}
+  table.spec td:last-child{border-bottom:0}
+  table.spec td::before{content:attr(data-label);flex:none;font-weight:700;color:var(--sub);text-align:left}
+  table.spec td.m-cat{display:block;background:var(--navy);color:#fff;font-weight:800;font-size:15px;text-align:left}
+  table.spec td.m-cat::before{content:none}
+  table.spec tr.bio td.m-cat{background:var(--green-dark);color:#fff}
+}
 
 /* 회사소개 */
 .about-greet{display:grid;grid-template-columns:1fr 1.3fr;gap:48px;margin-bottom:96px}
@@ -369,6 +383,21 @@ table.board .lock{color:var(--faint)}
 .admin-tbl tr.pending td{background:#FFFBF2}
 .admin-tbl td{white-space:nowrap}
 .admin-tbl td.t{white-space:normal;min-width:220px}
+/* 관리자 목록: 모바일 카드 */
+@media(max-width:640px){
+  .table-wrap:has(table.cards){border:0;overflow:visible}
+  table.cards,table.cards tbody,table.cards tr,table.cards td{display:block;width:100%!important}
+  table.cards thead,table.cards td.no{display:none}
+  table.cards tr{margin-bottom:12px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  table.cards td{display:flex;justify-content:space-between;gap:16px;padding:9px 16px;border-bottom:1px solid var(--line);text-align:right;white-space:normal!important}
+  table.cards td:last-child{border-bottom:0}
+  table.cards td::before{content:attr(data-label);flex:none;font-weight:700;color:var(--sub)}
+  table.cards td.t{display:block;text-align:left;font-size:15px;padding:13px 16px;min-width:0}
+  table.cards td.t::before{content:none}
+  table.cards td.empty{display:block;text-align:center}
+  table.cards td.dt,table.cards td.st{display:flex!important;width:100%!important;text-align:right}   /* 공개 게시판의 모바일 날짜 숨김 규칙 무효화 */
+  table.cards td.empty::before{content:none}
+}
 .meta-dl{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin-top:12px;font-size:14px}
 .meta-dl div{display:grid;grid-template-columns:72px 1fr;gap:8px}
 .meta-dl dt{color:var(--faint);font-weight:700}

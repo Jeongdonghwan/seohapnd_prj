@@ -20,6 +20,8 @@ MARK = {"서울·경기": (127.15, 37.45, "left"), "강원": (128.25, 37.70, "ri
         "충남": (126.85, 36.50, "left"), "전북": (127.15, 35.75, "left"), "경북": (128.75, 36.35, "right"),
         "경남": (128.35, 35.30, "right"), "제주": (126.55, 33.38, "right")}
 HQ = (126.99, 35.32)                    # 담양
+SHADE = {"서울·경기": "#7FB0F2", "강원": "#A9CBF7", "충북": "#5F9BEB", "충남": "#93BDF5", "전북": "#6FA6EF",
+         "전남": "#3D85E6", "경북": "#B9D5F9", "경남": "#86B5F3", "제주": "#5F9BEB"}   # 권역별 파랑 농도
 K = 100
 MIN_GAP = 33                            # 본사에서 나가는 선끼리 최소 각도(°)
 
@@ -60,7 +62,7 @@ def main():
         allxy += [q for r in rs for q in r]
         d = "".join("M" + "L".join(f"{x:.1f},{y:.1f}" for x, y in r) + "Z" for r in rs)
         if d:
-            shapes.append(f'<path class="{"hq-area" if g == "전남" else "area"}" d="{d}"/>')
+            shapes.append(f'<path fill="{SHADE[g]}" d="{d}"/>')
     hx, hy = xy(*HQ)
     names = list(MARK); pts = [xy(MARK[n][0], MARK[n][1]) for n in names]
     # 강원은 충북보다 멀어서, 출발 각도를 더 북쪽으로 줘야 두 선이 중간에 교차하지 않음
@@ -70,16 +72,21 @@ def main():
     for i, (n, (x, y), dep) in enumerate(zip(names, pts, deps)):
         ux, uy = math.cos(math.radians(dep)), math.sin(math.radians(dep)); L = math.hypot(x - hx, y - hy)
         lines.append(f'<path style="--i:{i}" d="M{hx + ux * 12:.1f},{hy + uy * 12:.1f} Q{hx + ux * L * .5:.1f},{hy + uy * L * .5:.1f} {x:.1f},{y:.1f}"/>')
-        side = MARK[n][2]; tx, an = (x - 12, "end") if side == "left" else (x + 12, "start")
-        marks.append(f'<g style="--i:{i}"><circle cx="{x:.1f}" cy="{y:.1f}" r="5.5"/><text x="{tx:.1f}" y="{y + 6.5:.1f}" text-anchor="{an}">{n}</text></g>')
+        side = MARK[n][2]; w = len(n) * 17 + 22                        # 라벨 상자 폭 (한글 약 17px/자)
+        bx = x - 14 - w if side == "left" else x + 14
+        marks.append(f'<g style="--i:{i}"><circle cx="{x:.1f}" cy="{y:.1f}" r="6"/>'
+                     f'<rect x="{bx:.1f}" y="{y - 16:.1f}" width="{w}" height="32" rx="7"/>'
+                     f'<text x="{bx + w / 2:.1f}" y="{y + 6:.1f}" text-anchor="middle">{n}</text></g>')
     x0 = min(p[0] for p in allxy) - 8; y0 = min(p[1] for p in allxy) - 8
     vb = f"{x0:.0f} {y0:.0f} {max(p[0] for p in allxy) - x0 + 8:.0f} {max(p[1] for p in allxy) - y0 + 8:.0f}"
     svg = f'''{{# tools/build_map.py 로 생성. 직접 고치지 말고 스크립트 수정 후 재생성 #}}
 <svg class="kmap" viewBox="{vb}" role="img" aria-label="담양 본사에서 전국 권역으로 이어지는 파트너십 네트워크 지도">
-  <g class="areas">{"".join(shapes)}</g>
-  <g class="lines">{"".join(lines)}</g>
+  <defs><filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="lift" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#1D5FD6" flood-opacity=".28"/></filter></defs>
+  <g class="areas" filter="url(#lift)">{"".join(shapes)}</g>
+  <g class="lines" filter="url(#glow)">{"".join(lines)}</g>
   <g class="marks">{"".join(marks)}</g>
-  <g class="hq"><circle class="pulse" cx="{hx:.1f}" cy="{hy:.1f}" r="8"/><circle cx="{hx:.1f}" cy="{hy:.1f}" r="8"/><text x="{hx - 16:.1f}" y="{hy + 6.5:.1f}" text-anchor="end">담양 본사</text></g>
+  <g class="hq"><circle class="pulse" cx="{hx:.1f}" cy="{hy:.1f}" r="10"/><circle cx="{hx:.1f}" cy="{hy:.1f}" r="10"/><rect x="{hx - 136:.1f}" y="{hy - 19:.1f}" width="116" height="38" rx="8"/><text x="{hx - 78:.1f}" y="{hy + 7:.1f}" text-anchor="middle">담양 본사</text></g>
 </svg>
 '''
     open(OUT, "w", encoding="utf-8").write(svg)

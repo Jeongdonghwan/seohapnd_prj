@@ -182,7 +182,7 @@ FACTORY = [
     {"img": "line-wide", "cap": "블로운 필름 압출 타워 2"},
     {"img": "line-green", "cap": "필름 생산 & 적재 1"},
     {"img": "line-rolls", "cap": "필름 생산 & 적재 2"},
-    {"img": "bio-rolls", "cap": "이로운 생분해 필름 포장"},   # 2026-10 업체: 차주 사진·문구 교체 예정
+    {"img": "packing", "cap": "포장 & 출하"},
     {"img": "exterior", "cap": "담양 무정공단 본사 · 공장"},
 ]
 

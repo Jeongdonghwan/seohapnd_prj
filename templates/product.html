@@ -1,18 +1,18 @@
 {% extends "base.html" %}
-{% from "_page.html" import phead %}
+{% from "_page.html" import phead with context %}
 {% set nav = 'products' %}
 {% block title %}{{ p.name }} — {{ C.name }}{% endblock %}
 {% block desc %}{{ p.lead }}. {{ p.features[0] }}{% endblock %}
 {% block head %}
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":{{ p.name|tojson }},"description":{{ p.lead|tojson }},"brand":{"@type":"Brand","name":"{{ C.brand }}"},"manufacturer":{"@type":"Organization","name":"{{ C.name }}"},"image":"{{ SITE_URL }}{{ url_for('static', filename='img/products/' ~ p.slug ~ '.webp') }}"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":{{ p.name|tojson }},"description":{{ p.lead|tojson }},"brand":{"@type":"Brand","name":{{ C.brand|tojson }}},"manufacturer":{"@type":"Organization","name":{{ C.name|tojson }}},"image":"{{ SITE_URL }}{{ url_for('static', filename='img/products/' ~ p.slug ~ '.webp') }}"}</script>
 {% endblock %}
 {% block body %}
-{{ phead(p.name, p.lead, 'line-green' if p.bio else 'line-tower', [('/products', '제품')]) }}
+{{ phead(p.name, p.lead, 'line-green' if p.bio else 'line-tower', [('/products', _('제품'))]) }}
 <main class="page prod">
   <aside class="prod-side">
-    <p class="side-title">제품 목록</p>
-    <ul>{% for q in products %}<li><a href="/products/{{ q.slug }}" class="{{ 'on' if q.slug == p.slug }}">{{ q.short }}</a></li>{% endfor %}</ul>
-    <a class="btn full" href="/inquiry/write">이 제품 문의</a>
+    <p class="side-title">{{ _('제품 목록') }}</p>
+    <ul>{% for q in products %}<li><a href="{{ L }}/products/{{ q.slug }}" class="{{ 'on' if q.slug == p.slug }}">{{ q.short }}</a></li>{% endfor %}</ul>
+    <a class="btn full" href="{{ L }}/inquiry/write">{{ _('이 제품 문의') }}</a>
   </aside>
 
   <article class="prod-body">
@@ -22,28 +22,28 @@
         {% if p.intro %}<p class="intro">{{ p.intro }}</p>{% endif %}
         <dl class="spec-dl">
           {% for k, v in p.spec.items() %}<div><dt>{{ k }}</dt><dd>{{ v }}</dd></div>{% endfor %}
-          <div><dt>색상</dt><dd>{{ p.colors }}</dd></div>
-          {% if p.box %}<div><dt>Box 포장</dt><dd>가능</dd></div>{% endif %}
+          <div><dt>{{ _('색상') }}</dt><dd>{{ p.colors }}</dd></div>
+          {% if p.box %}<div><dt>{{ _('Box 포장') }}</dt><dd>{{ _('가능') }}</dd></div>{% endif %}
         </dl>
       </div>
     </div>
 
     <section class="prod-sec reveal">
-      <h2>특징</h2>
+      <h2>{{ _('특징') }}</h2>
       <ul class="checks {{ 'green' if p.bio }}">{% for f in p.features %}<li>{{ f }}</li>{% endfor %}</ul>
       {% if p.note %}<p class="note">{{ p.note }}</p>{% endif %}
     </section>
 
     {% if p.crops %}
     <section class="prod-sec reveal">
-      <h2>적용 분야</h2>
+      <h2>{{ _('적용 분야') }}</h2>
       <ul class="chips">{% for c in p.crops %}<li>{{ c }}</li>{% endfor %}</ul>
     </section>
     <section class="prod-sec reveal">
-      <h2>생분해 과정</h2>
+      <h2>{{ _('생분해 과정') }}</h2>
       <ol class="bio-steps inline">
-        {% for step in ['멀칭 직후', '생육기', '수확 후 분해 시작', '토양으로 환원'] %}
-        <li><img src="{{ url_for('static', filename='img/products/bio-step' ~ loop.index ~ '.webp') }}" alt="생분해 {{ loop.index }}단계" loading="lazy"><span><b>0{{ loop.index }}</b>{{ step }}</span></li>
+        {% for step in BIO_STEPS %}
+        <li><img src="{{ url_for('static', filename='img/products/bio-step' ~ loop.index ~ '.webp') }}" alt="{{ step }}" loading="lazy"><span><b>0{{ loop.index }}</b>{{ step }}</span></li>
         {% endfor %}
       </ol>
     </section>
@@ -51,14 +51,14 @@
 
     {% if p.cautions %}
     <section class="prod-sec caution reveal">
-      <h2>주의사항</h2>
+      <h2>{{ _('주의사항') }}</h2>
       <ol>{% for c in p.cautions %}<li>{{ c }}</li>{% endfor %}</ol>
     </section>
     {% endif %}
 
     <div class="page-cta reveal">
-      <p>규격 외 주문, 유공 간격, 폭·두께 상담은 전화 또는 문의게시판으로 주세요.</p>
-      <div class="cta-btns"><a class="btn" href="tel:{{ C.tel }}">{{ C.tel }}</a><a class="btn line" href="/inquiry/write">문의 남기기</a><a class="btn line" href="/spec">규격표</a></div>
+      <p>{{ _('규격 외 주문, 유공 간격, 폭·두께 상담은 전화 또는 문의게시판으로 주세요.') }}</p>
+      <div class="cta-btns"><a class="btn" href="tel:{{ C.tel }}">{{ C.tel }}</a><a class="btn line" href="{{ L }}/inquiry/write">{{ _('문의 남기기') }}</a><a class="btn line" href="{{ L }}/spec">{{ _('규격표') }}</a></div>
     </div>
   </article>
 </main>

@@ -1,25 +1,25 @@
 {% extends "base.html" %}
-{% from "_page.html" import phead %}
+{% from "_page.html" import phead with context %}
 {% set nav = 'inquiry' %}
-{% block title %}{{ inq.subject if ok else '비밀글' }} — 문의게시판 — {{ C.name }}{% endblock %}
+{% block title %}{{ inq.subject if ok else _('비밀글') }} — {{ _('문의게시판') }} — {{ C.name }}{% endblock %}
 {% block head %}<meta name="robots" content="noindex">{% endblock %}
 {% block body %}
-{{ phead('문의게시판', '', 'line-tower', [('/inquiry', '문의게시판')]) }}
+{{ phead(_('문의게시판'), '', 'line-tower', [('/inquiry', _('문의게시판'))]) }}
 <main class="page narrow">
   {% for msg in get_flashed_messages() %}<div class="flash">{{ msg }}</div>{% endfor %}
   {% if not ok %}
   <form class="form pwbox reveal" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <p class="eyebrow">비밀글</p>
-    <h2>비밀번호를 입력해 주세요</h2>
-    <p class="sub">작성 시 입력한 비밀번호로 열람할 수 있습니다.</p>
-    <div class="row-inline"><input name="password" type="password" autofocus required><button class="btn">확인</button></div>
-    <a class="more" href="/inquiry">← 목록</a>
+    <p class="eyebrow">{{ _('비밀글') }}</p>
+    <h2>{{ _('비밀번호를 입력해 주세요') }}</h2>
+    <p class="sub">{{ _('작성 시 입력한 비밀번호로 열람할 수 있습니다.') }}</p>
+    <div class="row-inline"><input name="password" type="password" autofocus required><button class="btn">{{ _('확인') }}</button></div>
+    <a class="more" href="{{ L }}/inquiry">{{ _('← 목록') }}</a>
   </form>
   {% else %}
   <article class="post reveal">
     <header>
-      <span class="status s{{ inq.status }}">{{ '답변완료' if inq.status else '답변대기' }}</span>
+      <span class="status s{{ inq.status }}">{{ _('답변완료') if inq.status else _('답변대기') }}</span>
       <h1>{{ inq.subject }}</h1>
       <p class="meta">{{ inq.name|mask }}{% if inq.company %} · {{ inq.company }}{% endif %} · {{ inq.created_at }}</p>
     </header>
@@ -27,13 +27,13 @@
   </article>
   {% if inq.status %}
   <article class="answer reveal">
-    <header><span class="who">{{ C.name }} 답변</span><span class="meta">{{ inq.answered_at }}</span></header>
+    <header><span class="who">{{ _('{name} 답변').format(name=C.name) }}</span><span class="meta">{{ inq.answered_at }}</span></header>
     <div class="content">{{ inq.answer|nl2br }}</div>
   </article>
   {% else %}
-  <p class="note reveal">확인 후 답변 드리겠습니다. 급하시면 <a href="tel:{{ C.tel }}">{{ C.tel }}</a>로 연락 주세요.</p>
+  <p class="note reveal">{{ _('확인 후 답변 드리겠습니다. 급하시면 <a href="tel:{tel}">{tel}</a>로 연락 주세요.').format(tel=C.tel)|safe }}</p>
   {% endif %}
-  <div class="actions reveal"><a class="btn line" href="/inquiry">목록</a><a class="btn" href="/inquiry/write">새 문의</a></div>
+  <div class="actions reveal"><a class="btn line" href="{{ L }}/inquiry">{{ _('목록') }}</a><a class="btn" href="{{ L }}/inquiry/write">{{ _('새 문의') }}</a></div>
   {% endif %}
 </main>
 {% endblock %}

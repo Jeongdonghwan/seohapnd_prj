@@ -1,35 +1,35 @@
 {% extends "base.html" %}
-{% from "_page.html" import phead %}
+{% from "_page.html" import phead with context %}
 {% set nav = 'spec' %}
-{% block title %}생산제품 규격표 — {{ C.name }}{% endblock %}
-{% block desc %}{{ C.name }} 생산제품 규격표. LD·HD·흑백·장수·닥트·생분해 필름의 두께, 폭, 유공, 포장 단위.{% endblock %}
+{% block title %}{{ _('생산제품 규격표') }} — {{ C.name }}{% endblock %}
+{% block desc %}{{ _('생산제품 규격표. LD·HD·흑백·장수·닥트·생분해 필름의 두께, 폭, 유공, 포장 단위.') }} {{ C.name }}{% endblock %}
 {% block body %}
-{{ phead('생산제품 규격표', '두께 0.012mm부터, 최대 폭 600cm까지. 표에 없는 규격은 문의해 주세요.', 'line-rolls') }}
+{{ phead(_('생산제품 규격표'), _('두께 0.012mm부터, 최대 폭 600cm까지. 표에 없는 규격은 문의해 주세요.'), 'line-rolls') }}
 <main class="page">
   <div class="table-wrap reveal">
     <table class="spec">
-      <thead><tr><th colspan="2">생산품목</th><th>두께 (mm)</th><th>폭 (cm)</th><th>유공</th><th>포장</th></tr></thead>
+      <thead><tr><th colspan="2">{{ _('생산품목') }}</th><th>{{ _('두께 (mm)') }}</th><th>{{ _('폭 (cm)') }}</th><th>{{ _('유공') }}</th><th>{{ _('포장') }}</th></tr></thead>
       <tbody>
         {% for cat, color, thick, width, hole, pack in rows %}
         {% set first = loop.first or rows[loop.index0 - 1][0] != cat %}
         {% set span = rows|selectattr(0, 'equalto', cat)|list|length %}
-        <tr class="{{ 'bio' if '생분해' in cat }}">
+        <tr class="{{ 'bio' if loop.last }}">
           {% if first %}<th rowspan="{{ span }}" class="cat">{{ cat }}</th>{% endif %}
           <td class="m-cat">{{ cat }}{% if color %} · {{ color }}{% endif %}</td>
-          <td class="color{{ ' none' if not color }}" data-label="색상">{{ color or '—' }}</td>
-          <td data-label="두께 (mm)">{% set t = (thick or '문의').split('\n') %}<span>{{ t[0] }}{% for x in t[1:] %}<small class="sub-line">{{ x }}</small>{% endfor %}</span></td>
-          <td data-label="폭 (cm)">{{ width }}</td>
-          <td data-label="유공">{{ hole or '—' }}</td>
-          <td data-label="포장">{{ pack }}</td>
+          <td class="color{{ ' none' if not color }}" data-label="{{ _('색상') }}">{{ color or '—' }}</td>
+          <td data-label="{{ _('두께 (mm)') }}">{% set t = (thick or _('문의')).split('\n') %}<span>{{ t[0] }}{% for x in t[1:] %}<small class="sub-line">{{ x }}</small>{% endfor %}</span></td>
+          <td data-label="{{ _('폭 (cm)') }}">{{ width }}</td>
+          <td data-label="{{ _('유공') }}">{{ hole or '—' }}</td>
+          <td data-label="{{ _('포장') }}">{{ pack }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  <p class="note reveal">※ '타계 시'는 두 겹으로 접어 생산하는 경우의 폭입니다. 유공(구멍) 간격·배열은 작물에 맞춰 주문 가능합니다.</p>
+  <p class="note reveal">{{ _("※ '타계 시'는 두 겹으로 접어 생산하는 경우의 폭입니다. 유공(구멍) 간격·배열은 작물에 맞춰 주문 가능합니다.") }}</p>
   <div class="page-cta reveal">
-    <p>원하는 규격이 표에 없다면 전화로 바로 상담해 드립니다.</p>
-    <div class="cta-btns"><a class="btn" href="tel:{{ C.tel }}">{{ C.tel }}</a><a class="btn line" href="/inquiry/write">문의 남기기</a><a class="btn line" href="/brochure.pdf">브로슈어 PDF</a></div>
+    <p>{{ _('원하는 규격이 표에 없다면 전화로 바로 상담해 드립니다.') }}</p>
+    <div class="cta-btns"><a class="btn" href="tel:{{ C.tel }}">{{ C.tel }}</a><a class="btn line" href="{{ L }}/inquiry/write">{{ _('문의 남기기') }}</a><a class="btn line" href="/brochure.pdf">{{ _('브로슈어 PDF') }}</a></div>
   </div>
 </main>
 {% endblock %}

@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html lang="ko"{% if nav != 'home' %} class="seen"{% endif %}>
+<html lang="{{ LANG }}"{% if nav != 'home' %} class="seen"{% endif %}>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}{{ C.name }} — 농업용 멀칭필름 전문 제조{% endblock %}</title>
-<meta name="description" content="{% block desc %}담양 농업회사법인 (주)서하P&D. 용표 농업용 LD·HD 멀칭필름, 녹색·흑백·침공 필름, 환경표지 인증 이로운 생분해 필름 제조.{% endblock %}">
+<title>{% block title %}{{ C.name }} — {{ _('농업용 멀칭필름 전문 제조') }}{% endblock %}</title>
+<meta name="description" content="{% block desc %}{{ _('담양 농업회사법인 (주)서하P&D. 용표 농업용 LD·HD 멀칭필름, 녹색·흑백·침공 필름, 환경표지 인증 이로운 생분해 필름 제조.') }}{% endblock %}">
 <meta property="og:site_name" content="{{ C.name }}">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="{{ 'en_US' if EN else 'ko_KR' }}">
 <meta property="og:title" content="{{ self.title() }}">
 <meta property="og:description" content="{{ self.desc() }}">
 <meta property="og:image" content="{{ SITE_URL }}{{ url_for('static', filename='img/og.jpg') }}">
+{% if ALT %}<link rel="alternate" hreflang="ko" href="{{ SITE_URL }}{{ ALT.ko }}">
+<link rel="alternate" hreflang="en" href="{{ SITE_URL }}{{ ALT.en }}">{% endif %}
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
 <link rel="icon" href="{{ url_for('static', filename='favicon-32.png') }}" sizes="32x32" type="image/png">
@@ -20,18 +23,19 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 {% block head %}{% endblock %}
 </head>
-<body class="{% block bodyclass %}{% endblock %}">
+<body class="{% block bodyclass %}{% endblock %}{{ ' en' if EN }}">
 
 {% if nav == 'home' %}<div class="intro" aria-hidden="true"><div class="intro-in"><img class="intro-w" src="{{ url_for('static', filename='img/logo/logo-white.svg') }}" alt=""><span class="intro-line"></span><span class="intro-s">{{ C.brand_line }}</span></div></div>{% endif %}
 
 <header class="hd" id="hd">
   <div class="hd-in">
-    <a class="logo" href="/" aria-label="{{ C.name }} 홈"><img class="lc" src="{{ url_for('static', filename='img/logo/logo-h.svg') }}" alt="{{ C.name }}"><img class="lw" src="{{ url_for('static', filename='img/logo/logo-h-white.svg') }}" alt=""></a>
+    <a class="logo" href="{{ L }}/" aria-label="{{ C.name }} {{ _('홈') }}"><img class="lc" src="{{ url_for('static', filename='img/logo/logo-h.svg') }}" alt="{{ C.name }}"><img class="lw" src="{{ url_for('static', filename='img/logo/logo-h-white.svg') }}" alt=""></a>
     <nav class="gnb" id="gnb">
-      {% for key, label in NAV %}<a href="/{{ key }}" class="{{ 'on' if nav == key }}">{{ label }}</a>{% endfor %}
+      {% for key, label in NAV %}<a href="{{ L }}/{{ key }}" class="{{ 'on' if nav == key }}">{{ label }}</a>{% endfor %}
+      {% if ALT %}<span class="lang"><a href="{{ ALT.ko }}" lang="ko" hreflang="ko" class="{{ 'on' if not EN }}">KO</a><a href="{{ ALT.en }}" lang="en" hreflang="en" class="{{ 'on' if EN }}">EN</a></span>{% endif %}
       <a class="tel" href="tel:{{ C.tel }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>{{ C.tel }}</a>
     </nav>
-    <button class="burger" id="burger" aria-label="메뉴" aria-expanded="false"><span></span><span></span><span></span></button>
+    <button class="burger" id="burger" aria-label="{{ _('메뉴') }}" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </header>
 
@@ -41,16 +45,16 @@
   <div class="ft-in">
     <div class="ft-brand">
       <img class="ft-logo" src="{{ url_for('static', filename='img/logo/logo-white.svg') }}" alt="{{ C.name }}" loading="lazy">
-      <p>{{ C.legal }}<br>{{ C.en }}</p>
+      <p>{{ C.legal }}{% if not EN %}<br>{{ C.en }}{% endif %}</p>
     </div>
     <div class="ft-info">
       <p>{{ C.addr }}</p>
-      <p>대표 {{ C.ceo }} · 사업자등록번호 {{ C.biz_no }}</p>
+      <p>{{ _('대표') }} {{ C.ceo }} · {{ _('사업자등록번호') }} {{ C.biz_no }}</p>
       <p>T. <a href="tel:{{ C.tel }}">{{ C.tel }}</a> · F. {{ C.fax }}</p>
     </div>
     <div class="ft-links">
-      {% for key, label in NAV %}<a href="/{{ key }}">{{ label }}</a>{% endfor %}
-      <a href="/brochure.pdf">브로슈어 PDF</a>
+      {% for key, label in NAV %}<a href="{{ L }}/{{ key }}">{{ label }}</a>{% endfor %}
+      <a href="/brochure.pdf">{{ _('브로슈어 PDF') }}</a>
     </div>
   </div>
   <p class="copy">© {{ C.name }}. All rights reserved.</p>

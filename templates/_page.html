@@ -1,9 +1,9 @@
-{# 서브 페이지 상단 띠. 사용: {% from "_page.html" import phead %}{{ phead('제품', '...', 'line-green') }} #}
+{# 서브 페이지 상단 띠. 사용: {% from "_page.html" import phead with context %}{{ phead(_('제품'), '...', 'line-green') }} #}
 {% macro phead(title, sub='', img='line-tower', crumbs=[]) -%}
 <section class="phead">
   <div class="phead-bg" style="background-image:url('{{ url_for('static', filename='img/hero/' ~ img ~ '.webp') }}')"></div>
   <div class="phead-in">
-    <p class="crumbs"><a href="/">홈</a>{% for href, label in crumbs %} <span>›</span> <a href="{{ href }}">{{ label }}</a>{% endfor %}</p>
+    <p class="crumbs"><a href="{{ L }}/">{{ _('홈') }}</a>{% for href, label in crumbs %} <span>›</span> <a href="{{ L }}{{ href }}">{{ label }}</a>{% endfor %}</p>
     <h1 class="stg">{{ title }}</h1>
     {% if sub %}<p class="sub stg">{{ sub }}</p>{% endif %}
   </div>

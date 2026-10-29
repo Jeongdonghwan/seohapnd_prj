@@ -155,6 +155,49 @@ def main():
     # 11. 마스킹 필터
     m = app.jinja_env.filters["mask"]
     assert (m("김재홍"), m("홍길"), m("남궁민수"), m("A")) == ("김*홍", "홍*", "남**수", "A")
+    # 12. 영문: 데이터 구조가 국문과 같고, 사전에 빠진 키 없고, 영문 페이지에 한글이 없음
+    import glob as _glob
+    import data_en as DE
+    import i18n
+    assert [p["slug"] for p in D.PRODUCTS] == [p["slug"] for p in DE.PRODUCTS]
+    assert [c["key"] for c in D.CERTS] == [c["key"] for c in DE.CERTS]
+    assert [f["img"] for f in D.FACTORY] == [f["img"] for f in DE.FACTORY]
+    assert [k for k, _ in D.NAV] == [k for k, _ in DE.NAV]
+    for name in ("SPEC_ROWS", "ORG", "BIO_STEPS", "GREETING", "HISTORY"):
+        assert len(getattr(D, name)) == len(getattr(DE, name)), name
+    keys = set()
+    for tf in _glob.glob("templates/*.html"):
+        keys |= {m[1] for m in re.findall(r"""_\((['"])(.*?)\)""", open(tf, encoding="utf-8").read())}
+    keys |= set(re.findall(r't\("(.*?)"\)', open("app.py", encoding="utf-8").read()))
+    missing = sorted(k for k in keys if k not in i18n.EN)
+    assert not missing, missing
+    hangul = re.compile(r"[가-힣]")
+    e = app.test_client()
+    en_pages = ["/en", "/en/", "/en/about", "/en/products", "/en/spec", "/en/certifications", "/en/factory",
+                "/en/inquiry/write", "/en/nope"] + [f"/en/products/{p['slug']}" for p in D.PRODUCTS]
+    for u in en_pages:
+        r = e.get(u)
+        assert r.status_code == (404 if u.endswith("nope") else 200), u
+        html = re.sub(r"<!--.*?-->", "", r.get_data(as_text=True), flags=re.S)   # 주석은 화면에 안 보임
+        assert '<html lang="en"' in html, u
+        found = sorted(set(hangul.findall(html)))
+        assert not found, (u, "".join(found)[:40], html[html.find(found[0]) - 60:html.find(found[0]) + 40])
+        for ref in re.findall(r'href="(/[^"#?]*)', re.sub(r'<[^>]*hreflang="ko"[^>]*>', '', html)):   # KO 전환 버튼 제외           # 영문 페이지 안 링크는 /en 유지 (브로슈어·파비콘·정적 제외)
+            if not ref.startswith(("/static", "/brochure.pdf", "/favicon.ico")) and ref not in ("/",):
+                assert ref.startswith("/en"), (u, ref)
+    # 언어 전환 링크: 같은 페이지의 반대 언어
+    ko = c.get("/products/green").get_data(as_text=True)
+    assert 'href="/en/products/green"' in ko and '<html lang="ko"' in ko
+    en = e.get("/en/products/green").get_data(as_text=True)
+    assert 'href="/products/green"' in en and 'hreflang="en"' in en
+    assert "/en/products/green" in c.get("/sitemap.xml").get_data(as_text=True)
+    assert 'class="lang"' not in ad.get("/admin/login").get_data(as_text=True)    # 관리자는 국문만
+    # 영문 문의 작성 → /en 상세로, 영어 안내
+    r = e.post("/en/inquiry/write", data={"name": "John", "phone": "+1-555-0100", "subject": "Quote", "content": "Need 100 rolls", "is_private": "1", "password": "abcd"})
+    assert r.status_code == 302 and r.headers["Location"].startswith("/en/inquiry/")
+    v = e.get(r.headers["Location"]).get_data(as_text=True)
+    assert "Your inquiry has been received" in v and "Need 100 rolls" in v and "Pending" in v
+    assert "Please enter your name" in e.post("/en/inquiry/write", data={"name": "", "phone": "x", "subject": "s", "content": "c"}).get_data(as_text=True)
     print("smoke ok")
 
 

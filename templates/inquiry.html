@@ -1,30 +1,30 @@
 {% extends "base.html" %}
-{% from "_page.html" import phead %}
+{% from "_page.html" import phead with context %}
 {% set nav = 'inquiry' %}
-{% block title %}문의게시판 — {{ C.name }}{% endblock %}
-{% block desc %}{{ C.name }} 제품 구입·견적·규격 문의. 전화 {{ C.tel }} 또는 문의게시판에 남겨주시면 답변 드립니다.{% endblock %}
+{% block title %}{{ _('문의게시판') }} — {{ C.name }}{% endblock %}
+{% block desc %}{{ _('제품 구입·견적·규격 문의. 전화 {tel} 또는 문의게시판에 남겨주시면 답변 드립니다.').format(tel=C.tel) }}{% endblock %}
 {% block body %}
-{{ phead('문의게시판', '제품 구입 · 견적 · 규격 상담. 남겨주신 문의는 확인 후 답변 드립니다.', 'line-tower') }}
+{{ phead(_('문의게시판'), _('제품 구입 · 견적 · 규격 상담. 남겨주신 문의는 확인 후 답변 드립니다.'), 'line-tower') }}
 <main class="page narrow-wide">
   {% for msg in get_flashed_messages() %}<div class="flash">{{ msg }}</div>{% endfor %}
   <div class="board-top reveal">
-    <div class="quick"><span>급하시면 전화로</span><a href="tel:{{ C.tel }}">{{ C.tel }}</a><small>{{ C.hours }}</small></div>
-    <a class="btn" href="/inquiry/write">문의 남기기</a>
+    <div class="quick"><span>{{ _('급하시면 전화로') }}</span><a href="tel:{{ C.tel }}">{{ C.tel }}</a><small>{{ C.hours }}</small></div>
+    <a class="btn" href="{{ L }}/inquiry/write">{{ _('문의 남기기') }}</a>
   </div>
   <div class="table-wrap reveal">
     <table class="board">
-      <thead><tr><th class="no">번호</th><th>제목</th><th class="who">작성자</th><th class="st">상태</th><th class="dt">날짜</th></tr></thead>
+      <thead><tr><th class="no">{{ _('번호') }}</th><th>{{ _('제목') }}</th><th class="who">{{ _('작성자') }}</th><th class="st">{{ _('상태') }}</th><th class="dt">{{ _('날짜') }}</th></tr></thead>
       <tbody>
         {% for r in rows %}
         <tr>
           <td class="no">{{ r.id }}</td>
-          <td class="t"><a href="/inquiry/{{ r.id }}">{% if r.is_private %}<svg class="lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>{% endif %}{{ r.subject }}</a></td>
+          <td class="t"><a href="{{ L }}/inquiry/{{ r.id }}">{% if r.is_private %}<svg class="lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>{% endif %}{{ r.subject }}</a></td>
           <td class="who">{{ r.name|mask }}</td>
-          <td class="st"><span class="status s{{ r.status }}">{{ '답변완료' if r.status else '답변대기' }}</span></td>
+          <td class="st"><span class="status s{{ r.status }}">{{ _('답변완료') if r.status else _('답변대기') }}</span></td>
           <td class="dt">{{ r.created_at[:10] }}</td>
         </tr>
         {% else %}
-        <tr><td colspan="5" class="empty">첫 문의를 남겨주세요.</td></tr>
+        <tr><td colspan="5" class="empty">{{ _('첫 문의를 남겨주세요.') }}</td></tr>
         {% endfor %}
       </tbody>
     </table>

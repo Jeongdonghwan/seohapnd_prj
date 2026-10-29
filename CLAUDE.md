@@ -12,6 +12,13 @@
 - 새 문의 메일 알림은 `SMTP_HOST`+`NOTIFY_TO` 설정 시에만. 실패해도 문의 저장엔 영향 없음
 - CSRF: Flask-WTF `CSRFProtect`. 폼에 `csrf_token` hidden 필수. 스팸은 허니팟 필드 `website`
 
+## 영문 (2026-10-29)
+- 같은 뷰를 `/en` 접두사로 한 번 더 등록 (`app.py`의 `route()`), `g.lang`으로 언어 판단. 헤더 KO/EN 버튼은 같은 페이지 반대 언어로
+- 화면 문구: 템플릿은 `{{ _('국문 원문') }}`, 파이썬은 `t('국문')` → `i18n.py` 사전. 콘텐츠(제품·인증·연혁 등)는 `data.py` ↔ `data_en.py` (구조·순서 동일)
+- 내부 링크는 `{{ L }}/경로` (영문이면 /en). 관리자는 국문만. 브로슈어 PDF는 국문 1종
+- 지도는 `_korea_map.html` / `_korea_map_en.html` 둘 다 `tools/build_map.py`가 생성
+- 국문 문구를 고치면 `i18n.py` 키도 같이 고칠 것. test_smoke가 빠진 키·영문 페이지의 한글·영문 페이지의 국문 링크를 잡음
+
 ## 디자인 규칙 (2026-10-14 사용자 확정)
 - 컬러: 팜플렛 블루 `--brand:#2F7BFF`, 네이비 `--navy:#0B1F3A`, 생분해 전용 그린 `--green:#2FA84F`
 - 로고: 원본 `서하피엔디 로고.ai` → `tools/build_logo.py`로 `static/img/logo/` SVG 생성 (2026-10-19). 헤더 `logo-h.svg`(홈 히어로 위·메뉴 열림은 `logo-h-white.svg`), 인트로·푸터 `logo-white.svg`, 파비콘은 로고 파랑 둥근 사각형+흰 S 마크(`static/favicon.svg`·`favicon.ico`(/favicon.ico 라우트)·`apple-touch-icon.png`). 로고 글자색 #036EB7. **'용표' 배지·문구는 쓰지 않음**

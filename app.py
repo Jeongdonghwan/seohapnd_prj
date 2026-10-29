@@ -12,12 +12,14 @@ try:
 except ImportError:  # 서버 python 3.8 대비
     from backports.zoneinfo import ZoneInfo
 
-from flask import (Flask, Response, abort, flash, redirect, render_template, request,
+from flask import (Flask, Response, abort, flash, g, redirect, render_template, request,
                    send_from_directory, session, url_for)
 from flask_wtf.csrf import CSRFError, CSRFProtect
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import data as D
+import data as KO
+import data_en as EN
+from i18n import T, t
 from config import Config
 from db import close_db, get_db
 
@@ -34,9 +36,46 @@ if not Config.SECRET_KEY_SET:
 
 # ─── 공통 ───────────────────────────────────────────────
 
+# ─── 국문/영문 ── /en 으로 시작하면 영문. 같은 뷰 함수를 두 주소에 등록 ───
+
+def route(rule, **opts):
+    def deco(f):
+        app.route(rule, **opts)(f)
+        app.add_url_rule("/en" + (rule if rule != "/" else ""), f.__name__ + "_en", f, **opts)
+        if rule == "/":
+            app.add_url_rule("/en/", f.__name__ + "_en_slash", f, **opts)
+        return f
+    return deco
+
+
+@app.before_request
+def _lang():
+    g.lang = "en" if request.path == "/en" or request.path.startswith("/en/") else "ko"
+
+
+def D():
+    return EN if g.get("lang") == "en" else KO
+
+
+def L():
+    return "/en" if g.get("lang") == "en" else ""
+
+
+def alt_urls():
+    """현재 페이지의 국문/영문 주소. 관리자·정적 파일은 None (전환 버튼 숨김)."""
+    p = request.path
+    if p.startswith("/admin"):
+        return None
+    ko = (p[3:] or "/") if g.get("lang") == "en" else p
+    q = ("?" + request.query_string.decode()) if request.query_string else ""
+    return {"ko": ko + q, "en": "/en" + (ko if ko != "/" else "") + q}
+
+
 @app.context_processor
 def _globals():
-    return {"C": D.COMPANY, "NAV": D.NAV, "SITE_URL": app.config["SITE_URL"]}
+    d, en = D(), g.get("lang") == "en"
+    return {"C": d.COMPANY, "NAV": d.NAV, "BIO_STEPS": d.BIO_STEPS, "GREETING": d.GREETING, "HISTORY": d.HISTORY,
+            "SITE_URL": app.config["SITE_URL"], "_": T, "EN": en, "LANG": g.get("lang", "ko"), "L": L(), "ALT": alt_urls()}
 
 
 @app.template_filter("mask")
@@ -111,41 +150,42 @@ def notify(inq):
 
 # ─── 정적 페이지 ─────────────────────────────────────────
 
-@app.route("/")
+@route("/")
 def home():
-    return render_template("home.html", products=D.PRODUCTS, certs=D.CERTS,
-                           bio=D.PRODUCT_MAP["eroun-bio"], factory=D.FACTORY[:3])
+    d = D()
+    return render_template("home.html", products=d.PRODUCTS, certs=d.CERTS,
+                           bio=d.PRODUCT_MAP["eroun-bio"], factory=d.FACTORY[:3])
 
 
-@app.route("/about")
+@route("/about")
 def about():
-    return render_template("about.html", org=D.ORG, certs=D.CERTS)
+    return render_template("about.html", org=D().ORG, certs=D().CERTS)
 
 
-@app.route("/products")
+@route("/products")
 def products():
-    return render_template("products.html", products=D.PRODUCTS)
+    return render_template("products.html", products=D().PRODUCTS)
 
 
-@app.route("/products/<slug>")
+@route("/products/<slug>")
 def product(slug):
-    p = D.PRODUCT_MAP.get(slug) or abort(404)
-    return render_template("product.html", p=p, products=D.PRODUCTS)
+    p = D().PRODUCT_MAP.get(slug) or abort(404)
+    return render_template("product.html", p=p, products=D().PRODUCTS)
 
 
-@app.route("/spec")
+@route("/spec")
 def spec():
-    return render_template("spec.html", rows=D.SPEC_ROWS)
+    return render_template("spec.html", rows=D().SPEC_ROWS)
 
 
-@app.route("/certifications")
+@route("/certifications")
 def certifications():
-    return render_template("certifications.html", certs=D.CERTS)
+    return render_template("certifications.html", certs=D().CERTS)
 
 
-@app.route("/factory")
+@route("/factory")
 def factory():
-    return render_template("factory.html", photos=D.FACTORY)
+    return render_template("factory.html", photos=D().FACTORY)
 
 
 @app.route("/favicon.ico")
@@ -162,7 +202,8 @@ def brochure():
 def sitemap():
     base = app.config["SITE_URL"] or request.url_root.rstrip("/")
     urls = ["/", "/about", "/products", "/spec", "/certifications", "/factory", "/inquiry"] + \
-           [f"/products/{p['slug']}" for p in D.PRODUCTS]
+           [f"/products/{p['slug']}" for p in KO.PRODUCTS]
+    urls += ["/en" + (u if u != "/" else "") for u in urls]
     body = "".join(f"<url><loc>{base}{u}</loc></url>" for u in urls)
     return Response(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}</urlset>',
                     mimetype="application/xml")
@@ -185,7 +226,7 @@ def can_view(inq):
     return not inq["is_private"] or inq["id"] in session.get("inq_ok", [])
 
 
-@app.route("/inquiry")
+@route("/inquiry")
 def inquiry():
     page = max(1, request.args.get("page", 1, type=int))
     per = app.config["PER_PAGE"]
@@ -196,25 +237,25 @@ def inquiry():
     return render_template("inquiry.html", rows=rows, page=page, pages=max(1, -(-total // per)), total=total)
 
 
-@app.route("/inquiry/write", methods=["GET", "POST"])
+@route("/inquiry/write", methods=["GET", "POST"])
 def inquiry_write():
     if request.method == "GET":
         return render_template("inquiry_write.html", f={})
     f = {k: request.form.get(k, "").strip() for k in ("name", "phone", "email", "company", "subject", "content", "password")}
     f["is_private"] = 1 if request.form.get("is_private") else 0
     if request.form.get("website"):  # honeypot
-        return redirect(url_for("inquiry"))
+        return redirect(L() + "/inquiry")
     err = None
     if not (2 <= len(f["name"]) <= 20):
-        err = "이름을 입력해 주세요 (2~20자)"
+        err = t("이름을 입력해 주세요 (2~20자)")
     elif not PHONE_RE.match(f["phone"]):
-        err = "연락처를 확인해 주세요"
+        err = t("연락처를 확인해 주세요")
     elif not (2 <= len(f["subject"]) <= 100):
-        err = "제목을 입력해 주세요 (2~100자)"
+        err = t("제목을 입력해 주세요 (2~100자)")
     elif not (5 <= len(f["content"]) <= 3000):
-        err = "내용을 입력해 주세요 (5~3000자)"
+        err = t("내용을 입력해 주세요 (5~3000자)")
     elif f["is_private"] and not (4 <= len(f["password"]) <= 20):
-        err = "비밀글 비밀번호는 4자 이상 입력해 주세요"
+        err = t("비밀글 비밀번호는 4자 이상 입력해 주세요")
     if err:
         flash(err)
         return render_template("inquiry_write.html", f=f), 400
@@ -226,18 +267,18 @@ def inquiry_write():
     db.commit()
     remember(cur.lastrowid)
     notify(f)
-    flash("문의가 접수되었습니다. 확인 후 답변 드리겠습니다.")
-    return redirect(url_for("inquiry_view", iid=cur.lastrowid))
+    flash(t("문의가 접수되었습니다. 확인 후 답변 드리겠습니다."))
+    return redirect(f"{L()}/inquiry/{cur.lastrowid}")
 
 
-@app.route("/inquiry/<int:iid>", methods=["GET", "POST"])
+@route("/inquiry/<int:iid>", methods=["GET", "POST"])
 def inquiry_view(iid):
     inq = get_db().execute("SELECT * FROM inquiries WHERE id=?", (iid,)).fetchone() or abort(404)
     if request.method == "POST":
         if check_password_hash(inq["pw_hash"], request.form.get("password", "")):
             remember(iid)
-            return redirect(url_for("inquiry_view", iid=iid))
-        flash("비밀번호가 맞지 않습니다")
+            return redirect(f"{L()}/inquiry/{iid}")
+        flash(t("비밀번호가 맞지 않습니다"))
     return render_template("inquiry_view.html", inq=inq, ok=can_view(inq))
 
 
@@ -310,7 +351,7 @@ def admin_inquiry(iid):
 
 @app.errorhandler(CSRFError)
 def csrf_error(_):
-    flash("페이지가 오래되어 다시 시도해 주세요.")
+    flash(t("페이지가 오래되어 다시 시도해 주세요."))
     return redirect(request.referrer or url_for("home"))
 
 

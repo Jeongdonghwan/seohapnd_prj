@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}페이지를 찾을 수 없습니다 — {{ C.name }}{% endblock %}
+{% block title %}{{ _('페이지를 찾을 수 없습니다') }} — {{ C.name }}{% endblock %}
 {% block body %}
 <main class="page narrow center">
   <p class="eyebrow">404</p>
-  <h1>페이지를 찾을 수 없습니다</h1>
-  <p class="sub">주소가 바뀌었거나 준비 중인 페이지입니다.</p>
-  <a class="btn" href="/">홈으로</a>
+  <h1>{{ _('페이지를 찾을 수 없습니다') }}</h1>
+  <p class="sub">{{ _('주소가 바뀌었거나 준비 중인 페이지입니다.') }}</p>
+  <a class="btn" href="{{ L }}/">{{ _('홈으로') }}</a>
 </main>
 {% endblock %}

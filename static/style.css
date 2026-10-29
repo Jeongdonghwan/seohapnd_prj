@@ -65,6 +65,11 @@ h2{font-size:clamp(26px,3.4vw,40px)}
 .gnb a:hover{opacity:1;background:rgba(255,255,255,.14)}
 .hd.solid .gnb a:hover,body:not(.home) .hd .gnb a:hover{background:var(--surface)}
 .gnb a.on{opacity:1;font-weight:800}
+.gnb .lang{display:inline-flex;align-items:center;margin-left:6px;padding:2px;border:1px solid currentColor;border-radius:999px;opacity:.85}
+.gnb .lang a{padding:4px 10px;font-size:12.5px;font-weight:800;letter-spacing:.04em;border-radius:999px;opacity:.7}
+.gnb .lang a.on{opacity:1;background:var(--brand);color:#fff}
+.gnb .lang a:hover{background:transparent;opacity:1}
+.gnb .lang a.on:hover{background:var(--brand)}
 .gnb .tel{margin-left:10px;display:inline-flex;gap:6px;align-items:center;font-weight:800;background:var(--brand);color:#fff;opacity:1}
 .gnb .tel:hover{background:var(--brand-dark)}
 .burger{display:none;margin-left:auto;width:44px;height:44px;flex-direction:column;justify-content:center;align-items:center;gap:5px}
@@ -458,6 +463,8 @@ table.board .lock{color:var(--faint)}
   .menu-open .gnb{transform:none}
   .gnb a{font-size:20px;font-weight:700;padding:14px 16px;border-radius:var(--r2)}
   .gnb .tel{margin:16px 0 0;justify-content:center;height:54px}
+  .gnb .lang{align-self:flex-start;margin:12px 0 0 16px}
+  .gnb .lang a{font-size:15px;padding:6px 16px}
   html.menu-open body .hd{background:var(--navy);color:#fff;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}  /* blur가 있으면 fixed 메뉴 기준점이 헤더로 바뀌어 메뉴가 안 깔림 */  /* 서브 페이지 흰 헤더 규칙보다 우선 */
   .bio-in,.cta-in{grid-template-columns:1fr;gap:36px}
   .bio-text .sticky{position:static}

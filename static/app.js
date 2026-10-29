@@ -31,7 +31,7 @@
         if (on) hv.play().catch(() => {});
         btn.classList.toggle('on', on);
         btn.setAttribute('aria-pressed', on);
-        btn.querySelector('span').textContent = on ? '소리 끄기' : '소리 켜기';
+        btn.querySelector('span').textContent = on ? btn.dataset.on : btn.dataset.off;
       };
       btn.hidden = false;
       btn.addEventListener('click', () => {

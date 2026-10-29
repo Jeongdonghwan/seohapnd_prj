@@ -9,7 +9,12 @@ import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 SRC = os.path.join(ROOT, "tools", "data", "korea_provinces_2013.json")
-OUT = os.path.join(ROOT, "templates", "_korea_map.html")
+OUT = {"ko": os.path.join(ROOT, "templates", "_korea_map.html"), "en": os.path.join(ROOT, "templates", "_korea_map_en.html")}
+EN_NAME = {"서울·경기": "Capital Area", "강원": "Gangwon", "충북": "Chungbuk", "충남": "Chungnam", "전북": "Jeonbuk",
+           "경북": "Gyeongbuk", "경남": "Gyeongnam", "제주": "Jeju"}
+EN_SIDE = {"서울·경기": "right"}          # 영문은 길어서 왼쪽에 두면 지도 밖으로 나감
+TEXT = {"ko": ("담양 본사", "담양 본사에서 전국 권역으로 이어지는 파트너십 네트워크 지도"),
+        "en": ("Damyang HQ", "Partnership network map connecting Damyang head office to every region of Korea")}
 
 # 시도 코드 → 권역 (광역시는 둘러싼 도에 합침)
 GROUP = {"11": "서울·경기", "23": "서울·경기", "31": "서울·경기", "32": "강원", "33": "충북", "34": "충남", "29": "충남",
@@ -53,7 +58,7 @@ def fan(angles):
     return out
 
 
-def main():
+def main(lang):
     feats = json.load(open(SRC, encoding="utf-8"))["features"]
     shapes, allxy = [], []
     for f in feats:
@@ -72,26 +77,30 @@ def main():
     for i, (n, (x, y), dep) in enumerate(zip(names, pts, deps)):
         ux, uy = math.cos(math.radians(dep)), math.sin(math.radians(dep)); L = math.hypot(x - hx, y - hy)
         lines.append(f'<path style="--i:{i}" d="M{hx + ux * 12:.1f},{hy + uy * 12:.1f} Q{hx + ux * L * .5:.1f},{hy + uy * L * .5:.1f} {x:.1f},{y:.1f}"/>')
-        side = MARK[n][2]; w = len(n) * 17 + 22                        # 라벨 상자 폭 (한글 약 17px/자)
+        label = EN_NAME[n] if lang == "en" else n
+        side = EN_SIDE.get(n, MARK[n][2]) if lang == "en" else MARK[n][2]
+        w = round(len(label) * (9.6 if lang == "en" else 17) + 22)      # 라벨 상자 폭 (한글 17px/자, 영문 약 9.6px/자)
         bx = x - 14 - w if side == "left" else x + 14
         marks.append(f'<g style="--i:{i}"><circle cx="{x:.1f}" cy="{y:.1f}" r="6"/>'
                      f'<rect x="{bx:.1f}" y="{y - 16:.1f}" width="{w}" height="32" rx="7"/>'
-                     f'<text x="{bx + w / 2:.1f}" y="{y + 6:.1f}" text-anchor="middle">{n}</text></g>')
+                     f'<text x="{bx + w / 2:.1f}" y="{y + 6:.1f}" text-anchor="middle">{label}</text></g>')
+    hw = 132 if lang == "en" else 116          # 본사 라벨 상자 폭
     x0 = min(p[0] for p in allxy) - 8; y0 = min(p[1] for p in allxy) - 8
     vb = f"{x0:.0f} {y0:.0f} {max(p[0] for p in allxy) - x0 + 8:.0f} {max(p[1] for p in allxy) - y0 + 8:.0f}"
     svg = f'''{{# tools/build_map.py 로 생성. 직접 고치지 말고 스크립트 수정 후 재생성 #}}
-<svg class="kmap" viewBox="{vb}" role="img" aria-label="담양 본사에서 전국 권역으로 이어지는 파트너십 네트워크 지도">
+<svg class="kmap" viewBox="{vb}" role="img" aria-label="{TEXT[lang][1]}">
   <defs><filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <filter id="lift" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#1D5FD6" flood-opacity=".28"/></filter></defs>
   <g class="areas" filter="url(#lift)">{"".join(shapes)}</g>
   <g class="lines" filter="url(#glow)">{"".join(lines)}</g>
   <g class="marks">{"".join(marks)}</g>
-  <g class="hq"><circle class="pulse" cx="{hx:.1f}" cy="{hy:.1f}" r="10"/><circle cx="{hx:.1f}" cy="{hy:.1f}" r="10"/><rect x="{hx - 136:.1f}" y="{hy - 19:.1f}" width="116" height="38" rx="8"/><text x="{hx - 78:.1f}" y="{hy + 7:.1f}" text-anchor="middle">담양 본사</text></g>
+  <g class="hq"><circle class="pulse" cx="{hx:.1f}" cy="{hy:.1f}" r="10"/><circle cx="{hx:.1f}" cy="{hy:.1f}" r="10"/><rect x="{hx - 20 - hw:.1f}" y="{hy - 19:.1f}" width="{hw}" height="38" rx="8"/><text x="{hx - 20 - hw / 2:.1f}" y="{hy + 7:.1f}" text-anchor="middle">{TEXT[lang][0]}</text></g>
 </svg>
 '''
-    open(OUT, "w", encoding="utf-8").write(svg)
-    print(os.path.basename(OUT), f"{len(svg) // 1024}KB")
+    open(OUT[lang], "w", encoding="utf-8").write(svg)
+    print(os.path.basename(OUT[lang]), f"{len(svg) // 1024}KB")
 
 
 if __name__ == "__main__":
-    main()
+    main("ko")
+    main("en")

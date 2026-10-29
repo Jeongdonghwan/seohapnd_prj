@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% from "_page.html" import phead %}
+{% from "_page.html" import phead with context %}
 {% set nav = 'products' %}
-{% block title %}제품 — {{ C.name }}{% endblock %}
-{% block desc %}농업용 LD·HD 멀칭필름, 장수·치마·끈 필름, 녹색·흑백·침공 필름, 환경표지 인증 이로운 생분해 필름. {{ C.name }} 제품 안내.{% endblock %}
+{% block title %}{{ _('제품') }} — {{ C.name }}{% endblock %}
+{% block desc %}{{ _('농업용 LD·HD 멀칭필름, 장수·치마·끈 필름, 녹색·흑백·침공 필름, 환경표지 인증 이로운 생분해 필름.') }} {{ C.name }}{% endblock %}
 {% block body %}
-{{ phead('제품', '작물과 계절에 맞는 농업용 멀칭필름 ' ~ products|length ~ '종을 담양 공장에서 직접 생산합니다.', 'line-green') }}
+{{ phead(_('제품'), _('작물과 계절에 맞는 농업용 멀칭필름 {n}종을 담양 공장에서 직접 생산합니다.').format(n=products|length), 'line-green') }}
 <main class="page">
   <ul class="pcards">
     {% for p in products %}
     <li class="pcard reveal {{ 'bio' if p.bio }}" style="--d:{{ loop.index0 * 60 }}ms">
-      <a href="/products/{{ p.slug }}">
+      <a href="{{ L }}/products/{{ p.slug }}">
         <div class="pimg"><img src="{{ url_for('static', filename='img/products/' ~ p.slug ~ '.webp') }}" alt="{{ p.name }}" loading="lazy"></div>
         <div class="pbody">
           <h3>{{ p.name }}</h3>
@@ -21,8 +21,8 @@
     {% endfor %}
   </ul>
   <div class="page-cta reveal">
-    <p>규격·두께·폭은 <a href="/spec">생산제품 규격표</a>에서 한눈에 확인하세요.</p>
-    <a class="btn" href="/inquiry/write">제품 문의하기</a>
+    <p>{{ _('규격·두께·폭은 <a href="{L}/spec">생산제품 규격표</a>에서 한눈에 확인하세요.').format(L=L)|safe }}</p>
+    <a class="btn" href="{{ L }}/inquiry/write">{{ _('제품 문의하기') }}</a>
   </div>
 </main>
 {% endblock %}
